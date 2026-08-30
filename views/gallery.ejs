@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Галерея — <%= siteTitle %></title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="wrap page">
+    <p class="eyebrow">Собрание работ</p>
+    <h1 class="page-title">Галерея</h1>
+
+    <% if (items.length === 0) { %>
+      <p class="empty-state">Картины пока не добавлены.</p>
+    <% } else { %>
+      <div class="gallery-grid">
+        <% items.forEach(function(item) { %>
+          <figure class="artwork">
+            <div class="artwork__frame">
+              <% if (item.image) { %>
+                <img src="<%= rawUrl(item.image) %>" alt="<%= item.title %>" loading="lazy" />
+              <% } %>
+            </div>
+            <figcaption class="artwork__label">
+              <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
+              <% if (item.description) { %>
+                <p class="artwork__desc"><%= item.description %></p>
+              <% } %>
+            </figcaption>
+          </figure>
+        <% }); %>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

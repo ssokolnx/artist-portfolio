@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title><%= siteTitle %></title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="hero wrap">
+    <div class="hero__grid">
+      <div class="hero__photo">
+        <% if (home.photo) { %>
+          <img src="<%= rawUrl(home.photo) %>" alt="<%= home.title %>" />
+        <% } else { %>
+          <div class="hero__photo-placeholder">Фото появится здесь</div>
+        <% } %>
+      </div>
+      <div class="hero__text">
+        <p class="eyebrow">Художница</p>
+        <h1><%= home.title %></h1>
+        <p class="hero__greeting"><%= home.greeting %></p>
+        <a class="button button--outline" href="/gallery">Смотреть галерею</a>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

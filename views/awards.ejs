@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Награды — <%= siteTitle %></title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="wrap page">
+    <p class="eyebrow">Признание</p>
+    <h1 class="page-title">Награды</h1>
+
+    <% if (items.length === 0) { %>
+      <p class="empty-state">Награды пока не добавлены.</p>
+    <% } else { %>
+      <ul class="record-list">
+        <% items.forEach(function(item) { %>
+          <li class="record">
+            <span class="record__year"><%= item.year || '' %></span>
+            <div class="record__body">
+              <h3 class="record__title"><%= item.title %></h3>
+              <% if (item.description) { %><p class="record__desc"><%= item.description %></p><% } %>
+            </div>
+          </li>
+        <% }); %>
+      </ul>
+    <% } %>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>
