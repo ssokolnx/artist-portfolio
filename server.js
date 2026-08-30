@@ -74,6 +74,11 @@ app.get("/exhibitions", (req, res) => {
   res.render("exhibitions", { items });
 });
 
+app.get("/process", (req, res) => {
+  const items = [...content().process].reverse();
+  res.render("process", { items });
+});
+
 // ---------- Вход в админку ----------
 
 function requireAuth(req, res, next) {
@@ -107,6 +112,7 @@ app.get("/admin", requireAuth, (req, res) => {
     gallery: [...content().gallery].sort((a, b) => (b.year || 0) - (a.year || 0)),
     awards: [...content().awards].sort((a, b) => (b.year || 0) - (a.year || 0)),
     exhibitions: [...content().exhibitions].sort((a, b) => (b.year || 0) - (a.year || 0)),
+    process: [...content().process].reverse(),
     saved: req.query.saved || null,
   });
 });
@@ -361,6 +367,84 @@ app.post("/admin/exhibitions/delete/:id", requireAuth, async (req, res, next) =>
       await store.save("Удалена выставка");
     }
     res.redirect("/admin?saved=exhibitions");
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ----- Фото творческого процесса -----
+
+app.post("/admin/process/add", requireAuth, upload.single("image"), async (req, res, next) => {
+  try {
+    const data = content();
+    const item = {
+      id: store.nextId(data.process),
+      title: req.body.title || "",
+      imageThumb: null,
+      imageFull: null,
+    };
+    if (req.file) {
+      const { imageThumb, imageFull } = await uploadGalleryImage(req.file, "process");
+      item.imageThumb = imageThumb;
+      item.imageFull = imageFull;
+    }
+    data.process.push(item);
+    await store.save("Добавлено фото творческого процесса");
+    res.redirect("/admin?saved=process");
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/admin/process/bulk-add", requireAuth, uploadMany.array("images", 20), async (req, res, next) => {
+  try {
+    const data = content();
+    const files = req.files || [];
+    for (const file of files) {
+      const { imageThumb, imageFull } = await uploadGalleryImage(file, "process");
+      data.process.push({
+        id: store.nextId(data.process),
+        title: titleFromFilename(file.originalname),
+        imageThumb,
+        imageFull,
+      });
+    }
+    if (files.length > 0) {
+      await store.save(`Добавлено фото творческого процесса: ${files.length}`);
+    }
+    res.redirect("/admin?saved=process");
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/admin/process/edit/:id", requireAuth, upload.single("image"), async (req, res, next) => {
+  try {
+    const data = content();
+    const item = data.process.find((i) => i.id === Number(req.params.id));
+    if (!item) return res.redirect("/admin?saved=notfound");
+    item.title = req.body.title || "";
+    if (req.file) {
+      const { imageThumb, imageFull } = await uploadGalleryImage(req.file, "process");
+      item.imageThumb = imageThumb;
+      item.imageFull = imageFull;
+    }
+    await store.save("Изменено фото творческого процесса");
+    res.redirect("/admin?saved=process");
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/admin/process/delete/:id", requireAuth, async (req, res, next) => {
+  try {
+    const data = content();
+    const idx = data.process.findIndex((i) => i.id === Number(req.params.id));
+    if (idx !== -1) {
+      data.process.splice(idx, 1);
+      await store.save("Удалено фото творческого процесса");
+    }
+    res.redirect("/admin?saved=process");
   } catch (err) {
     next(err);
   }

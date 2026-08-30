@@ -23,17 +23,23 @@
       <p class="save-banner">Сохранено ✓</p>
     <% } %>
 
+    <%
+      const openTab = ["gallery", "awards", "exhibitions", "process"].includes(saved) ? saved : "home";
+    %>
+
     <div class="tabs">
-      <input type="radio" name="tab" id="tab-home" class="tab-input" checked>
-      <input type="radio" name="tab" id="tab-gallery" class="tab-input">
-      <input type="radio" name="tab" id="tab-awards" class="tab-input">
-      <input type="radio" name="tab" id="tab-exhibitions" class="tab-input">
+      <input type="radio" name="tab" id="tab-home" class="tab-input" <% if (openTab === "home") { %>checked<% } %>>
+      <input type="radio" name="tab" id="tab-gallery" class="tab-input" <% if (openTab === "gallery") { %>checked<% } %>>
+      <input type="radio" name="tab" id="tab-awards" class="tab-input" <% if (openTab === "awards") { %>checked<% } %>>
+      <input type="radio" name="tab" id="tab-exhibitions" class="tab-input" <% if (openTab === "exhibitions") { %>checked<% } %>>
+      <input type="radio" name="tab" id="tab-process" class="tab-input" <% if (openTab === "process") { %>checked<% } %>>
 
       <div class="tab-buttons">
         <label for="tab-home" class="tab-button">Главная</label>
         <label for="tab-gallery" class="tab-button">Галерея (<%= gallery.length %>)</label>
         <label for="tab-awards" class="tab-button">Награды (<%= awards.length %>)</label>
         <label for="tab-exhibitions" class="tab-button">Выставки (<%= exhibitions.length %>)</label>
+        <label for="tab-process" class="tab-button">Творческий процесс (<%= process.length %>)</label>
       </div>
 
       <!-- ===== ГЛАВНАЯ ===== -->
@@ -116,7 +122,7 @@
                     <button type="submit" class="button button--small">Сохранить изменения</button>
                   </form>
                 </details>
-                <form method="POST" action="/admin/gallery/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту картину? Отменить будет нельзя.');" class="inline-form">
+                <form method="POST" action="/admin/gallery/delete/<%= item.id %>" data-confirm="Удалить эту картину? Отменить будет нельзя." class="inline-form">
                   <button type="submit" class="button button--danger button--small">Удалить</button>
                 </form>
               </div>
@@ -164,7 +170,7 @@
                     <button type="submit" class="button button--small">Сохранить изменения</button>
                   </form>
                 </details>
-                <form method="POST" action="/admin/awards/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту награду?');" class="inline-form">
+                <form method="POST" action="/admin/awards/delete/<%= item.id %>" data-confirm="Удалить эту награду?" class="inline-form">
                   <button type="submit" class="button button--danger button--small">Удалить</button>
                 </form>
               </div>
@@ -212,7 +218,58 @@
                     <button type="submit" class="button button--small">Сохранить изменения</button>
                   </form>
                 </details>
-                <form method="POST" action="/admin/exhibitions/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту выставку?');" class="inline-form">
+                <form method="POST" action="/admin/exhibitions/delete/<%= item.id %>" data-confirm="Удалить эту выставку?" class="inline-form">
+                  <button type="submit" class="button button--danger button--small">Удалить</button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- ===== ТВОРЧЕСКИЙ ПРОЦЕСС ===== -->
+      <section class="tab-panel tab-panel--process">
+        <h2>Добавить фото творческого процесса</h2>
+        <form method="POST" action="/admin/process/add" enctype="multipart/form-data" class="card-form">
+          <label>Подпись (необязательно)</label>
+          <input type="text" name="title" placeholder="например, «В мастерской»" />
+          <label>Фотография</label>
+          <input type="file" name="image" accept="image/*" required />
+          <button type="submit" class="button">Добавить фото</button>
+        </form>
+
+        <h2 class="section-gap">Добавить сразу несколько фото</h2>
+        <p class="hint">
+          Выберите до 20 фотографий сразу — подпись возьмётся из имени файла,
+          её можно изменить позже через «Изменить».
+        </p>
+        <form method="POST" action="/admin/process/bulk-add" enctype="multipart/form-data" class="card-form">
+          <label>Фотографии</label>
+          <input type="file" name="images" accept="image/*" multiple required />
+          <button type="submit" class="button">Добавить все фото</button>
+        </form>
+
+        <h2 class="section-gap">Все фото</h2>
+        <% if (process.length === 0) { %>
+          <p class="hint">Пока ничего не добавлено.</p>
+        <% } %>
+        <div class="item-list">
+          <% process.forEach(function(item) { %>
+            <div class="item-card">
+              <% if (item.imageThumb) { %><img class="item-card__thumb" src="<%= rawUrl(item.imageThumb) %>" alt="" /><% } %>
+              <div class="item-card__body">
+                <strong><%= item.title || 'Без подписи' %></strong>
+                <details>
+                  <summary>Изменить</summary>
+                  <form method="POST" action="/admin/process/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
+                    <label>Подпись</label>
+                    <input type="text" name="title" value="<%= item.title || '' %>" />
+                    <label>Новая фотография (необязательно)</label>
+                    <input type="file" name="image" accept="image/*" />
+                    <button type="submit" class="button button--small">Сохранить изменения</button>
+                  </form>
+                </details>
+                <form method="POST" action="/admin/process/delete/<%= item.id %>" data-confirm="Удалить это фото?" class="inline-form">
                   <button type="submit" class="button button--danger button--small">Удалить</button>
                 </form>
               </div>
@@ -223,5 +280,16 @@
 
     </div>
   </main>
+
+  <div class="save-overlay" id="save-overlay">
+    <div class="save-overlay__card">
+      <div class="save-overlay__bar-track">
+        <div class="save-overlay__bar" id="save-overlay-bar"></div>
+      </div>
+      <p class="save-overlay__label" id="save-overlay-label">Сохранение…</p>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
 </body>
 </html>

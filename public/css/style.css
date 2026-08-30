@@ -30,11 +30,38 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
+  position: relative;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
+}
+body.modal-open { overflow: hidden; }
+
+/* Акварельный фон в духе выставочной экспликации: цветные размытые
+   пятна поверх тёплой бумажной подложки плюс лёгкое зерно бумаги. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 6% 10%, rgba(139, 95, 168, 0.24), transparent 32%),
+    radial-gradient(circle at 94% 6%, rgba(214, 92, 58, 0.22), transparent 34%),
+    radial-gradient(circle at 90% 92%, rgba(63, 124, 176, 0.20), transparent 36%),
+    radial-gradient(circle at 4% 90%, rgba(106, 155, 79, 0.20), transparent 34%),
+    radial-gradient(circle at 50% 46%, rgba(224, 168, 62, 0.12), transparent 60%),
+    var(--bg);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.045;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 img { max-width: 100%; display: block; }
@@ -85,6 +112,15 @@ a:hover { text-decoration: underline; }
   padding-bottom: 14px;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.site-header__brand { display: flex; flex-direction: column; gap: 2px; }
+.site-header__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 
 .site-title {
@@ -154,14 +190,6 @@ a:hover { text-decoration: underline; }
   font-weight: 600;
   margin: 0 0 18px;
   line-height: 1.1;
-}
-.hero__tagline {
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--primary);
-  letter-spacing: 0.02em;
-  margin: 0 0 22px;
 }
 .hero__greeting {
   font-size: 17px;
@@ -234,6 +262,13 @@ a:hover { text-decoration: underline; }
 }
 .artwork {
   display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
   color: var(--text);
   background: var(--surface);
   border-radius: var(--radius-m);
@@ -417,14 +452,16 @@ a:hover { text-decoration: underline; }
 #tab-home:checked ~ .tab-buttons label[for="tab-home"],
 #tab-gallery:checked ~ .tab-buttons label[for="tab-gallery"],
 #tab-awards:checked ~ .tab-buttons label[for="tab-awards"],
-#tab-exhibitions:checked ~ .tab-buttons label[for="tab-exhibitions"] {
+#tab-exhibitions:checked ~ .tab-buttons label[for="tab-exhibitions"],
+#tab-process:checked ~ .tab-buttons label[for="tab-process"] {
   color: var(--on-primary);
   background: var(--primary);
 }
 #tab-home:checked ~ .tab-panel--home,
 #tab-gallery:checked ~ .tab-panel--gallery,
 #tab-awards:checked ~ .tab-panel--awards,
-#tab-exhibitions:checked ~ .tab-panel--exhibitions {
+#tab-exhibitions:checked ~ .tab-panel--exhibitions,
+#tab-process:checked ~ .tab-panel--process {
   display: block;
 }
 
@@ -493,4 +530,131 @@ a:hover { text-decoration: underline; }
 
 @media (max-width: 560px) {
   .item-card { flex-direction: column; }
+}
+
+/* ============ Модальное окно карточек («жидкое стекло») ============ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(32, 27, 22, 0.28);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  transition: opacity 0.25s ease;
+}
+.modal.is-open { opacity: 1; pointer-events: auto; }
+
+.modal__card {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  max-height: 88vh;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-l);
+  box-shadow: var(--e3);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.25s ease;
+}
+.modal.is-open .modal__card { transform: translateY(0) scale(1); }
+
+.modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: var(--e1);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+.modal__close:hover { background: #fff; }
+
+.modal__image-wrap {
+  background: var(--surface-alt);
+  min-height: 260px;
+  display: flex;
+}
+.modal__image { width: 100%; height: 100%; object-fit: contain; margin: auto; max-height: 88vh; }
+
+.modal__info { padding: 32px 28px; }
+.modal__event {
+  display: inline-block;
+  font-size: 12.5px;
+  color: var(--on-primary-container);
+  background: var(--primary-container);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin: 0 0 12px;
+}
+.modal__title { font-family: var(--display); font-size: 24px; margin: 0 0 8px; }
+.modal__year { color: var(--text-secondary); font-weight: 600; margin: 0 0 14px; }
+.modal__desc { color: var(--text-secondary); white-space: pre-line; margin: 0; }
+
+@media (max-width: 720px) {
+  .modal__card { grid-template-columns: 1fr; max-height: 92vh; }
+  .modal__image-wrap { min-height: 220px; }
+}
+
+/* ============ Индикатор сохранения/загрузки ============ */
+.save-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(32, 27, 22, 0.35);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.2s ease;
+}
+.save-overlay.is-visible { opacity: 1; pointer-events: auto; }
+
+.save-overlay__card {
+  width: 100%;
+  max-width: 320px;
+  background: var(--surface);
+  border-radius: var(--radius-m);
+  box-shadow: var(--e3);
+  padding: 24px;
+  text-align: center;
+}
+.save-overlay__bar-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--outline);
+  overflow: hidden;
+}
+.save-overlay__bar {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  border-radius: var(--radius-pill);
+  transition: width 0.15s ease;
+}
+.save-overlay__label {
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
