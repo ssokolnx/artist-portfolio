@@ -121,30 +121,31 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
-  padding-bottom: 14px;
+  padding-top: 16px;
+  padding-bottom: 16px;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.site-header__brand { display: flex; flex-direction: column; gap: 2px; }
+.site-header__brand { display: flex; flex-direction: column; gap: 3px; justify-content: center; }
 .site-header__eyebrow {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--primary);
+  color: var(--text-secondary);
 }
 
 .site-title {
   font-family: var(--display);
   font-weight: 600;
-  font-size: 21px;
+  font-size: 20px;
   color: var(--text);
+  line-height: 1.15;
 }
 .site-title:hover { text-decoration: none; color: var(--primary); }
 
-.site-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.site-nav { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
 .site-nav a {
   color: var(--text-secondary);
   font-size: 14px;
@@ -172,10 +173,10 @@ a:hover { text-decoration: underline; }
 .admin-link:hover { color: var(--primary); }
 
 /* ============ Главная / герой ============ */
-.hero { padding: 48px 24px 90px; }
+.hero { padding: 48px 24px 72px; }
 .hero__grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: minmax(260px, 400px) 1fr;
   gap: 56px;
   align-items: center;
 }
@@ -197,6 +198,7 @@ a:hover { text-decoration: underline; }
   color: var(--text-secondary);
   font-size: 14px;
 }
+.hero__text { max-width: 640px; }
 .hero__text h1 {
   font-family: var(--display);
   font-size: clamp(34px, 4.6vw, 52px);
@@ -205,31 +207,70 @@ a:hover { text-decoration: underline; }
   line-height: 1.1;
 }
 .hero__greeting {
-  font-size: 17px;
+  font-size: 17.5px;
   color: var(--text-secondary);
-  max-width: 46ch;
   margin: 0 0 30px;
   white-space: pre-line;
 }
 
 @media (max-width: 760px) {
   .hero__grid { grid-template-columns: 1fr; gap: 32px; }
+  .hero__photo img, .hero__photo-placeholder { max-width: 340px; margin: 0 auto; }
+}
+
+/* ============ Избранные работы (главная) ============ */
+.featured { padding: 0 24px 72px; }
+.featured__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.featured__heading {
+  font-family: var(--display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 600;
+  margin: 0;
+}
+.featured__all {
+  font-weight: 600;
+  font-size: 14.5px;
+  white-space: nowrap;
+}
+.featured__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
 }
 
 /* ============ О художнике и её творчестве ============ */
 .about { padding: 0 24px 90px; }
+.about__card {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-l);
+  box-shadow: var(--e1);
+  padding: 44px 48px;
+  border-left: 4px solid var(--primary);
+}
 .about__heading {
   font-family: var(--display);
-  font-size: clamp(26px, 3.2vw, 36px);
+  font-size: clamp(24px, 3vw, 32px);
   font-weight: 600;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
 }
 .about__text {
-  font-size: 17px;
+  font-size: 16.5px;
   color: var(--text-secondary);
-  max-width: 68ch;
+  max-width: 66ch;
   white-space: pre-line;
-  line-height: 1.6;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .about__card { padding: 28px; }
 }
 
 /* ============ Кнопки (Material filled / outlined / text) ============ */
