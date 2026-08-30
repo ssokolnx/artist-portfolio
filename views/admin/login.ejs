@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Вход в админку — <%= siteTitle %></title>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <main class="login-screen">
+    <form class="login-card" method="POST" action="/admin/login">
+      <p class="eyebrow">Личный кабинет</p>
+      <h1>Вход</h1>
+      <label for="password">Пароль</label>
+      <input type="password" id="password" name="password" autofocus required />
+      <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+      <button type="submit" class="button">Войти</button>
+      <a class="back-link" href="/">← Вернуться на сайт</a>
+    </form>
+  </main>
+</body>
+</html>

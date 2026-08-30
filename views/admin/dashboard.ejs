@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Админка — <%= siteTitle %></title>
+  <%- include('../partials/head') %>
+</head>
+<body class="admin">
+  <header class="admin-bar">
+    <div class="wrap admin-bar__row">
+      <span class="admin-bar__title">Панель управления сайтом</span>
+      <div class="admin-bar__actions">
+        <a href="/" target="_blank" class="button button--outline button--small">Открыть сайт</a>
+        <form method="POST" action="/admin/logout" style="display:inline">
+          <button type="submit" class="button button--ghost button--small">Выйти</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap admin-main">
+
+    <% if (saved) { %>
+      <p class="save-banner">Сохранено ✓</p>
+    <% } %>
+
+    <div class="tabs">
+      <input type="radio" name="tab" id="tab-home" class="tab-input" checked>
+      <input type="radio" name="tab" id="tab-gallery" class="tab-input">
+      <input type="radio" name="tab" id="tab-awards" class="tab-input">
+      <input type="radio" name="tab" id="tab-exhibitions" class="tab-input">
+
+      <div class="tab-buttons">
+        <label for="tab-home" class="tab-button">Главная</label>
+        <label for="tab-gallery" class="tab-button">Галерея (<%= gallery.length %>)</label>
+        <label for="tab-awards" class="tab-button">Награды (<%= awards.length %>)</label>
+        <label for="tab-exhibitions" class="tab-button">Выставки (<%= exhibitions.length %>)</label>
+      </div>
+
+      <!-- ===== ГЛАВНАЯ ===== -->
+      <section class="tab-panel tab-panel--home">
+        <h2>Главная страница</h2>
+        <p class="hint">Текст и фото, которые видны сразу при заходе на сайт.</p>
+        <form method="POST" action="/admin/home" enctype="multipart/form-data" class="card-form">
+          <label for="home-title">Имя художницы (заголовок сайта)</label>
+          <input type="text" id="home-title" name="title" value="<%= home.title %>" required />
+
+          <label for="home-greeting">Приветственный текст</label>
+          <textarea id="home-greeting" name="greeting" rows="6"><%= home.greeting %></textarea>
+
+          <label for="home-photo">Фотография (необязательно — оставьте пустым, чтобы не менять)</label>
+          <% if (home.photo) { %>
+            <img class="current-photo" src="<%= rawUrl(home.photo) %>" alt="Текущее фото" />
+          <% } %>
+          <input type="file" id="home-photo" name="photo" accept="image/*" />
+
+          <button type="submit" class="button">Сохранить главную страницу</button>
+        </form>
+      </section>
+
+      <!-- ===== ГАЛЕРЕЯ ===== -->
+      <section class="tab-panel tab-panel--gallery">
+        <h2>Добавить картину</h2>
+        <form method="POST" action="/admin/gallery/add" enctype="multipart/form-data" class="card-form">
+          <label>Название картины</label>
+          <input type="text" name="title" required />
+          <label>Год</label>
+          <input type="number" name="year" placeholder="например, 2021" />
+          <label>Описание (необязательно)</label>
+          <textarea name="description" rows="3"></textarea>
+          <label>Фотография картины</label>
+          <input type="file" name="image" accept="image/*" required />
+          <button type="submit" class="button">Добавить в галерею</button>
+        </form>
+
+        <h2 class="section-gap">Все картины</h2>
+        <% if (gallery.length === 0) { %>
+          <p class="hint">Пока ничего не добавлено.</p>
+        <% } %>
+        <div class="item-list">
+          <% gallery.forEach(function(item) { %>
+            <div class="item-card">
+              <% if (item.image) { %><img class="item-card__thumb" src="<%= rawUrl(item.image) %>" alt="" /><% } %>
+              <div class="item-card__body">
+                <strong><%= item.title %></strong> <span class="muted"><%= item.year || '' %></span>
+                <details>
+                  <summary>Изменить</summary>
+                  <form method="POST" action="/admin/gallery/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
+                    <label>Название</label>
+                    <input type="text" name="title" value="<%= item.title %>" required />
+                    <label>Год</label>
+                    <input type="number" name="year" value="<%= item.year || '' %>" />
+                    <label>Описание</label>
+                    <textarea name="description" rows="3"><%= item.description %></textarea>
+                    <label>Новая фотография (необязательно)</label>
+                    <input type="file" name="image" accept="image/*" />
+                    <button type="submit" class="button button--small">Сохранить изменения</button>
+                  </form>
+                </details>
+                <form method="POST" action="/admin/gallery/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту картину? Отменить будет нельзя.');" class="inline-form">
+                  <button type="submit" class="button button--danger button--small">Удалить</button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- ===== НАГРАДЫ ===== -->
+      <section class="tab-panel tab-panel--awards">
+        <h2>Добавить награду</h2>
+        <form method="POST" action="/admin/awards/add" class="card-form">
+          <label>Название награды</label>
+          <input type="text" name="title" required />
+          <label>Год</label>
+          <input type="number" name="year" />
+          <label>Описание (необязательно)</label>
+          <textarea name="description" rows="3"></textarea>
+          <button type="submit" class="button">Добавить награду</button>
+        </form>
+
+        <h2 class="section-gap">Все награды</h2>
+        <% if (awards.length === 0) { %>
+          <p class="hint">Пока ничего не добавлено.</p>
+        <% } %>
+        <div class="item-list">
+          <% awards.forEach(function(item) { %>
+            <div class="item-card">
+              <div class="item-card__body">
+                <strong><%= item.title %></strong> <span class="muted"><%= item.year || '' %></span>
+                <details>
+                  <summary>Изменить</summary>
+                  <form method="POST" action="/admin/awards/edit/<%= item.id %>" class="card-form">
+                    <label>Название</label>
+                    <input type="text" name="title" value="<%= item.title %>" required />
+                    <label>Год</label>
+                    <input type="number" name="year" value="<%= item.year || '' %>" />
+                    <label>Описание</label>
+                    <textarea name="description" rows="3"><%= item.description %></textarea>
+                    <button type="submit" class="button button--small">Сохранить изменения</button>
+                  </form>
+                </details>
+                <form method="POST" action="/admin/awards/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту награду?');" class="inline-form">
+                  <button type="submit" class="button button--danger button--small">Удалить</button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- ===== ВЫСТАВКИ ===== -->
+      <section class="tab-panel tab-panel--exhibitions">
+        <h2>Добавить выставку</h2>
+        <form method="POST" action="/admin/exhibitions/add" class="card-form">
+          <label>Название выставки</label>
+          <input type="text" name="title" required />
+          <label>Год</label>
+          <input type="number" name="year" />
+          <label>Место проведения</label>
+          <input type="text" name="place" />
+          <label>Описание (необязательно)</label>
+          <textarea name="description" rows="3"></textarea>
+          <button type="submit" class="button">Добавить выставку</button>
+        </form>
+
+        <h2 class="section-gap">Все выставки</h2>
+        <% if (exhibitions.length === 0) { %>
+          <p class="hint">Пока ничего не добавлено.</p>
+        <% } %>
+        <div class="item-list">
+          <% exhibitions.forEach(function(item) { %>
+            <div class="item-card">
+              <div class="item-card__body">
+                <strong><%= item.title %></strong> <span class="muted"><%= item.year || '' %></span>
+                <% if (item.place) { %><div class="muted"><%= item.place %></div><% } %>
+                <details>
+                  <summary>Изменить</summary>
+                  <form method="POST" action="/admin/exhibitions/edit/<%= item.id %>" class="card-form">
+                    <label>Название</label>
+                    <input type="text" name="title" value="<%= item.title %>" required />
+                    <label>Год</label>
+                    <input type="number" name="year" value="<%= item.year || '' %>" />
+                    <label>Место проведения</label>
+                    <input type="text" name="place" value="<%= item.place %>" />
+                    <label>Описание</label>
+                    <textarea name="description" rows="3"><%= item.description %></textarea>
+                    <button type="submit" class="button button--small">Сохранить изменения</button>
+                  </form>
+                </details>
+                <form method="POST" action="/admin/exhibitions/delete/<%= item.id %>" onsubmit="return confirm('Удалить эту выставку?');" class="inline-form">
+                  <button type="submit" class="button button--danger button--small">Удалить</button>
+                </form>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</body>
+</html>
