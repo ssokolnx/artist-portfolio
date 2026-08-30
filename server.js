@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const session = require("express-session");
+const cookieSession = require("cookie-session");
 const multer = require("multer");
 const path = require("path");
 const crypto = require("crypto");
@@ -15,12 +15,15 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
+
+// Признак входа в админку хранится не в памяти сервера, а в подписанной
+// куке в браузере. Так вход не слетает, если Render перезапустит сайт
+// после "засыпания" на бесплатном тарифе.
 app.use(
-  session({
+  cookieSession({
+    name: "session",
     secret: process.env.SESSION_SECRET || "измени-меня",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 12 }, // 12 часов
+    maxAge: 1000 * 60 * 60 * 12, // 12 часов
   })
 );
 
@@ -79,7 +82,8 @@ app.post("/admin/login", (req, res) => {
 });
 
 app.post("/admin/logout", (req, res) => {
-  req.session.destroy(() => res.redirect("/admin/login"));
+  req.session = null;
+  res.redirect("/admin/login");
 });
 
 // ---------- Админка ----------
