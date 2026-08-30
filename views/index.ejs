@@ -25,13 +25,55 @@
     </div>
   </main>
 
-  <% if (home.about) { %>
-    <section class="about wrap">
-      <h2 class="about__heading">О художнике и её творчестве</h2>
-      <p class="about__text"><%= home.about %></p>
+  <% if (featured && featured.length > 0) { %>
+    <section class="featured wrap">
+      <div class="featured__head">
+        <div>
+          <p class="eyebrow">Избранное</p>
+          <h2 class="featured__heading">Работы</h2>
+        </div>
+        <a href="/gallery" class="featured__all">Вся галерея →</a>
+      </div>
+      <div class="featured__grid">
+        <% featured.forEach(function(item, idx) { %>
+          <a
+            href="/gallery/<%= item.id %>"
+            class="artwork reveal"
+            style="transition-delay: <%= idx * 60 %>ms"
+            data-modal-card
+            data-image="<%= item.imageFull ? rawUrl(item.imageFull) : (item.imageThumb ? rawUrl(item.imageThumb) : '') %>"
+            data-title="<%= item.title %>"
+            data-year="<%= item.year || '' %>"
+            data-event="<%= item.event || '' %>"
+            data-description="<%= item.description || '' %>"
+          >
+            <div class="artwork__frame">
+              <% if (item.imageThumb) { %>
+                <img src="<%= rawUrl(item.imageThumb) %>" alt="<%= item.title %>" loading="lazy" />
+              <% } %>
+            </div>
+            <div class="artwork__label">
+              <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
+            </div>
+          </a>
+        <% }); %>
+      </div>
     </section>
   <% } %>
 
+  <% if (home.about) { %>
+    <section class="about wrap">
+      <div class="about__card reveal">
+        <p class="eyebrow">О художнике</p>
+        <h2 class="about__heading">Творческий путь</h2>
+        <p class="about__text"><%= home.about %></p>
+      </div>
+    </section>
+  <% } %>
+
+  <%- include('partials/modal') %>
   <%- include('partials/footer') %>
+  <script src="/js/modal.js"></script>
+  <script src="/js/reveal.js"></script>
 </body>
 </html>
