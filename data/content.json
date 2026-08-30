@@ -4,18 +4,7 @@
     "greeting": "Добро пожаловать на мой сайт. Здесь собраны мои картины, награды и выставки.",
     "photo": "data/images/home/1788114541117-ac1de8d0.jpg"
   },
-  "gallery": [
-    {
-      "id": 2,
-      "title": "Набережная",
-      "year": 2026,
-      "description": "Рншш",
-      "image": "data/images/gallery/1788117320198-5e425634.png",
-      "imageThumb": "data/images/gallery/1788117320198-5e425634.png",
-      "imageFull": "data/images/gallery/1788117320198-5e425634.png",
-      "event": ""
-    }
-  ],
+  "gallery": [],
   "awards": [],
   "exhibitions": [
     {
