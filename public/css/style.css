@@ -39,19 +39,40 @@ body {
 }
 body.modal-open { overflow: hidden; }
 
-/* Акварельный фон в духе выставочной экспликации: цветные размытые
-   пятна поверх тёплой бумажной подложки плюс лёгкое зерно бумаги. */
+/* Акварельный фон в духе выставочной экспликации: цветные кляксы-пятна
+   по углам страницы поверх тёплой бумажной подложки, плюс лёгкое зерно
+   бумаги. Каждая клякса собрана из нескольких пятен с резким краем,
+   чтобы имитировать брызги краски, а не мягкое свечение. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(circle at 6% 10%, rgba(139, 95, 168, 0.24), transparent 32%),
-    radial-gradient(circle at 94% 6%, rgba(214, 92, 58, 0.22), transparent 34%),
-    radial-gradient(circle at 90% 92%, rgba(63, 124, 176, 0.20), transparent 36%),
-    radial-gradient(circle at 4% 90%, rgba(106, 155, 79, 0.20), transparent 34%),
-    radial-gradient(circle at 50% 46%, rgba(224, 168, 62, 0.12), transparent 60%),
+    /* верхний левый угол — фиолетовая клякса с бирюзовой каплей */
+    radial-gradient(160px circle at 5% 6%, rgba(124, 79, 158, 0.55) 0%, rgba(124, 79, 158, 0.55) 58%, transparent 62%),
+    radial-gradient(55px circle at 17% 2%, rgba(124, 79, 158, 0.45) 0%, rgba(124, 79, 158, 0.45) 58%, transparent 62%),
+    radial-gradient(28px circle at 23% 12%, rgba(124, 79, 158, 0.35) 0%, rgba(124, 79, 158, 0.35) 58%, transparent 62%),
+    radial-gradient(70px circle at 2% 20%, rgba(47, 138, 150, 0.4) 0%, rgba(47, 138, 150, 0.4) 58%, transparent 62%),
+
+    /* верхний правый угол — коралловая клякса с малиновой каплей */
+    radial-gradient(180px circle at 95% 5%, rgba(212, 88, 62, 0.5) 0%, rgba(212, 88, 62, 0.5) 58%, transparent 62%),
+    radial-gradient(45px circle at 84% 13%, rgba(212, 88, 62, 0.4) 0%, rgba(212, 88, 62, 0.4) 58%, transparent 62%),
+    radial-gradient(60px circle at 99% 17%, rgba(178, 58, 108, 0.4) 0%, rgba(178, 58, 108, 0.4) 58%, transparent 62%),
+
+    /* правый край — крупное синее пятно */
+    radial-gradient(200px circle at 97% 48%, rgba(56, 110, 168, 0.42) 0%, rgba(56, 110, 168, 0.42) 58%, transparent 62%),
+    radial-gradient(45px circle at 90% 58%, rgba(56, 110, 168, 0.32) 0%, rgba(56, 110, 168, 0.32) 58%, transparent 62%),
+
+    /* нижний правый угол — зелёная и жёлтая кляксы (у кисточек) */
+    radial-gradient(150px circle at 93% 95%, rgba(90, 150, 70, 0.42) 0%, rgba(90, 150, 70, 0.42) 58%, transparent 62%),
+    radial-gradient(65px circle at 80% 87%, rgba(224, 168, 62, 0.48) 0%, rgba(224, 168, 62, 0.48) 58%, transparent 62%),
+
+    /* нижний левый угол — крупная зелёная клякса с фиолетовой каплей */
+    radial-gradient(180px circle at 4% 93%, rgba(90, 150, 70, 0.48) 0%, rgba(90, 150, 70, 0.48) 58%, transparent 62%),
+    radial-gradient(35px circle at 15% 82%, rgba(90, 150, 70, 0.35) 0%, rgba(90, 150, 70, 0.35) 58%, transparent 62%),
+    radial-gradient(45px circle at 1% 78%, rgba(124, 79, 158, 0.32) 0%, rgba(124, 79, 158, 0.32) 58%, transparent 62%),
+
     var(--bg);
 }
 body::after {
