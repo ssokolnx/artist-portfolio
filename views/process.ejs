@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <title>Творческий процесс — <%= siteTitle %></title>
+  <title>Рукоделие — <%= siteTitle %></title>
   <%- include('partials/head') %>
 </head>
 <body>
@@ -9,16 +9,17 @@
 
   <main class="wrap page">
     <p class="eyebrow">За кулисами</p>
-    <h1 class="page-title">Творческий процесс</h1>
+    <h1 class="page-title">Рукоделие</h1>
 
     <% if (items.length === 0) { %>
       <p class="empty-state">Фотографии пока не добавлены.</p>
     <% } else { %>
       <div class="gallery-grid">
-        <% items.forEach(function(item) { %>
+        <% items.forEach(function(item, idx) { %>
           <button
             type="button"
-            class="artwork"
+            class="artwork reveal"
+            style="transition-delay: <%= Math.min(idx * 50, 400) %>ms"
             data-modal-card
             data-image="<%= item.imageFull ? rawUrl(item.imageFull) : (item.imageThumb ? rawUrl(item.imageThumb) : '') %>"
             data-title="<%= item.title %>"

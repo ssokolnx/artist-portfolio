@@ -48,32 +48,11 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background:
-    /* верхний левый угол — фиолетовая клякса с бирюзовой каплей */
-    radial-gradient(160px circle at 5% 6%, rgba(124, 79, 158, 0.55) 0%, rgba(124, 79, 158, 0.55) 58%, transparent 62%),
-    radial-gradient(55px circle at 17% 2%, rgba(124, 79, 158, 0.45) 0%, rgba(124, 79, 158, 0.45) 58%, transparent 62%),
-    radial-gradient(28px circle at 23% 12%, rgba(124, 79, 158, 0.35) 0%, rgba(124, 79, 158, 0.35) 58%, transparent 62%),
-    radial-gradient(70px circle at 2% 20%, rgba(47, 138, 150, 0.4) 0%, rgba(47, 138, 150, 0.4) 58%, transparent 62%),
-
-    /* верхний правый угол — коралловая клякса с малиновой каплей */
-    radial-gradient(180px circle at 95% 5%, rgba(212, 88, 62, 0.5) 0%, rgba(212, 88, 62, 0.5) 58%, transparent 62%),
-    radial-gradient(45px circle at 84% 13%, rgba(212, 88, 62, 0.4) 0%, rgba(212, 88, 62, 0.4) 58%, transparent 62%),
-    radial-gradient(60px circle at 99% 17%, rgba(178, 58, 108, 0.4) 0%, rgba(178, 58, 108, 0.4) 58%, transparent 62%),
-
-    /* правый край — крупное синее пятно */
-    radial-gradient(200px circle at 97% 48%, rgba(56, 110, 168, 0.42) 0%, rgba(56, 110, 168, 0.42) 58%, transparent 62%),
-    radial-gradient(45px circle at 90% 58%, rgba(56, 110, 168, 0.32) 0%, rgba(56, 110, 168, 0.32) 58%, transparent 62%),
-
-    /* нижний правый угол — зелёная и жёлтая кляксы (у кисточек) */
-    radial-gradient(150px circle at 93% 95%, rgba(90, 150, 70, 0.42) 0%, rgba(90, 150, 70, 0.42) 58%, transparent 62%),
-    radial-gradient(65px circle at 80% 87%, rgba(224, 168, 62, 0.48) 0%, rgba(224, 168, 62, 0.48) 58%, transparent 62%),
-
-    /* нижний левый угол — крупная зелёная клякса с фиолетовой каплей */
-    radial-gradient(180px circle at 4% 93%, rgba(90, 150, 70, 0.48) 0%, rgba(90, 150, 70, 0.48) 58%, transparent 62%),
-    radial-gradient(35px circle at 15% 82%, rgba(90, 150, 70, 0.35) 0%, rgba(90, 150, 70, 0.35) 58%, transparent 62%),
-    radial-gradient(45px circle at 1% 78%, rgba(124, 79, 158, 0.32) 0%, rgba(124, 79, 158, 0.32) 58%, transparent 62%),
-
-    var(--bg);
+  background-color: var(--bg);
+  background-image: url("/images/bg-splash.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 body::after {
   content: "";
@@ -100,6 +79,19 @@ a:hover { text-decoration: underline; }
   outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Плавное проявление карточек при прокрутке */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .artwork__frame img { transition: none; }
 }
 
 .eyebrow {
@@ -304,10 +296,18 @@ a:hover { text-decoration: underline; }
 }
 .artwork__frame {
   background: var(--surface-alt);
-  aspect-ratio: 1/1;
   overflow: hidden;
 }
-.artwork__frame img { width: 100%; height: 100%; object-fit: cover; }
+.artwork__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.35s ease;
+}
+.artwork:hover .artwork__frame img,
+.artwork:focus-visible .artwork__frame img {
+  transform: scale(1.06);
+}
 .artwork__label { padding: 14px 16px 18px; }
 .artwork__title {
   font-family: var(--display);
@@ -354,39 +354,68 @@ a:hover { text-decoration: underline; }
   .artwork-detail { grid-template-columns: 1fr; gap: 24px; }
 }
 
-/* Награды / выставки */
-.record-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
-.record {
+/* Награды / выставки — вертикальная лента времени */
+.timeline { list-style: none; margin: 0; padding: 0; max-width: 720px; }
+.timeline__item {
+  position: relative;
   display: grid;
-  grid-template-columns: 70px auto 1fr;
-  gap: 20px;
-  align-items: center;
-  padding: 18px 20px;
+  grid-template-columns: 84px 28px 1fr;
+  align-items: start;
+  padding: 20px 0;
+}
+.timeline__item::before {
+  content: "";
+  position: absolute;
+  left: 97px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--outline);
+}
+.timeline__item:first-child::before { top: 36px; }
+.timeline__item:last-child::before { bottom: calc(100% - 36px); }
+
+.timeline__year {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--primary);
+  text-align: right;
+  padding-right: 16px;
+  padding-top: 4px;
+}
+.timeline__dot {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  margin-top: 10px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-container);
+}
+.timeline__card {
   background: var(--surface);
   border-radius: var(--radius-m);
   box-shadow: var(--e1);
+  padding: 18px 22px;
+  margin-left: 8px;
 }
-.record__year {
-  font-family: var(--display);
-  font-weight: 600;
-  color: var(--primary);
-  font-size: 19px;
-}
-.record__photo {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
+.timeline__photo {
+  width: 100%;
+  max-width: 220px;
   border-radius: var(--radius-s);
+  margin-bottom: 12px;
 }
-.record__title { margin: 0 0 4px; font-family: var(--display); font-weight: 600; font-size: 18px; }
-.record__place { margin: 0 0 4px; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
-.record__desc { margin: 0; color: var(--text-secondary); }
+.timeline__title { margin: 0 0 4px; font-family: var(--display); font-weight: 600; font-size: 18px; }
+.timeline__place { margin: 0 0 6px; color: var(--text-secondary); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+.timeline__desc { margin: 0; color: var(--text-secondary); }
 
 @media (max-width: 560px) {
-  .record { grid-template-columns: 56px 1fr; grid-template-areas: "year title" "photo photo"; }
-  .record__year { grid-area: year; }
-  .record__photo { grid-area: photo; width: 100%; height: 140px; }
-  .record__body { grid-area: title; }
+  .timeline__item { grid-template-columns: 52px 24px 1fr; }
+  .timeline__item::before { left: 63px; }
+  .timeline__year { font-size: 16px; padding-right: 8px; }
 }
 
 /* ============ Вход в админку ============ */
@@ -573,13 +602,12 @@ a:hover { text-decoration: underline; }
 
 .modal__card {
   position: relative;
-  width: 100%;
-  max-width: 920px;
+  width: auto;
+  max-width: min(940px, 92vw);
   max-height: 88vh;
-  overflow: auto;
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
   background: rgba(255, 255, 255, 0.72);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   backdrop-filter: blur(24px) saturate(160%);
@@ -588,6 +616,7 @@ a:hover { text-decoration: underline; }
   box-shadow: var(--e3);
   transform: translateY(10px) scale(0.98);
   transition: transform 0.25s ease;
+  overflow: hidden;
 }
 .modal.is-open .modal__card { transform: translateY(0) scale(1); }
 
@@ -610,12 +639,28 @@ a:hover { text-decoration: underline; }
 
 .modal__image-wrap {
   background: var(--surface-alt);
-  min-height: 260px;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.modal__image { width: 100%; height: 100%; object-fit: contain; margin: auto; max-height: 88vh; }
+.modal__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+}
 
-.modal__info { padding: 32px 28px; }
+.modal__info {
+  flex: 0 0 320px;
+  width: 320px;
+  padding: 32px 28px;
+  overflow-y: auto;
+  max-height: 82vh;
+}
 .modal__event {
   display: inline-block;
   font-size: 12.5px;
@@ -630,8 +675,10 @@ a:hover { text-decoration: underline; }
 .modal__desc { color: var(--text-secondary); white-space: pre-line; margin: 0; }
 
 @media (max-width: 720px) {
-  .modal__card { grid-template-columns: 1fr; max-height: 92vh; }
-  .modal__image-wrap { min-height: 220px; }
+  .modal__card { flex-direction: column; max-height: 92vh; overflow-y: auto; }
+  .modal__image-wrap { min-height: 220px; flex: none; }
+  .modal__image { max-height: 50vh; }
+  .modal__info { width: 100%; flex: none; max-height: none; overflow: visible; }
 }
 
 /* ============ Индикатор сохранения/загрузки ============ */

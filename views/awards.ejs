@@ -14,20 +14,21 @@
     <% if (items.length === 0) { %>
       <p class="empty-state">Награды пока не добавлены.</p>
     <% } else { %>
-      <ul class="record-list">
-        <% items.forEach(function(item) { %>
-          <li class="record">
-            <span class="record__year"><%= item.year || '' %></span>
-            <% if (item.image) { %>
-              <img class="record__photo" src="<%= rawUrl(item.image) %>" alt="<%= item.title %>" loading="lazy" />
-            <% } %>
-            <div class="record__body">
-              <h3 class="record__title"><%= item.title %></h3>
-              <% if (item.description) { %><p class="record__desc"><%= item.description %></p><% } %>
+      <ol class="timeline">
+        <% items.forEach(function(item, idx) { %>
+          <li class="timeline__item reveal" style="transition-delay: <%= Math.min(idx * 70, 420) %>ms">
+            <span class="timeline__year"><%= item.year || '' %></span>
+            <span class="timeline__dot"></span>
+            <div class="timeline__card">
+              <% if (item.image) { %>
+                <img class="timeline__photo" src="<%= rawUrl(item.image) %>" alt="<%= item.title %>" loading="lazy" />
+              <% } %>
+              <h3 class="timeline__title"><%= item.title %></h3>
+              <% if (item.description) { %><p class="timeline__desc"><%= item.description %></p><% } %>
             </div>
           </li>
         <% }); %>
-      </ul>
+      </ol>
     <% } %>
   </main>
 

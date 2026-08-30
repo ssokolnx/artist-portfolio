@@ -39,7 +39,7 @@
         <label for="tab-gallery" class="tab-button">Галерея (<%= gallery.length %>)</label>
         <label for="tab-awards" class="tab-button">Награды (<%= awards.length %>)</label>
         <label for="tab-exhibitions" class="tab-button">Выставки (<%= exhibitions.length %>)</label>
-        <label for="tab-process" class="tab-button">Творческий процесс (<%= process.length %>)</label>
+        <label for="tab-process" class="tab-button">Рукоделие (<%= process.length %>)</label>
       </div>
 
       <!-- ===== ГЛАВНАЯ ===== -->
@@ -227,9 +227,9 @@
         </div>
       </section>
 
-      <!-- ===== ТВОРЧЕСКИЙ ПРОЦЕСС ===== -->
+      <!-- ===== РУКОДЕЛИЕ ===== -->
       <section class="tab-panel tab-panel--process">
-        <h2>Добавить фото творческого процесса</h2>
+        <h2>Добавить фото рукоделия</h2>
         <form method="POST" action="/admin/process/add" enctype="multipart/form-data" class="card-form">
           <label>Подпись (необязательно)</label>
           <input type="text" name="title" placeholder="например, «В мастерской»" />
@@ -240,8 +240,8 @@
 
         <h2 class="section-gap">Добавить сразу несколько фото</h2>
         <p class="hint">
-          Выберите до 20 фотографий сразу — подпись возьмётся из имени файла,
-          её можно изменить позже через «Изменить».
+          Выберите до 20 фотографий сразу — подпись можно будет добавить
+          позже у каждого фото через «Изменить».
         </p>
         <form method="POST" action="/admin/process/bulk-add" enctype="multipart/form-data" class="card-form">
           <label>Фотографии</label>

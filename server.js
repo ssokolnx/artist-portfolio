@@ -42,8 +42,12 @@ function content() {
 }
 
 app.use((req, res, next) => {
+  const home = content().home;
   res.locals.rawUrl = github.rawUrl;
-  res.locals.siteTitle = content().home.title || "Портфолио";
+  res.locals.siteTitle = home.title || "Портфолио";
+  res.locals.siteUrl = `${req.protocol}://${req.get("host")}`;
+  res.locals.ogDescription = (home.about || home.greeting || "").slice(0, 200);
+  res.locals.ogImage = home.photo ? github.rawUrl(home.photo) : null;
   next();
 });
 
@@ -129,6 +133,22 @@ async function saveToRepo(buffer, folder, suffix, ext) {
   return repoPath;
 }
 
+// Удаляет файл из репозитория, когда картину/фото убирают или заменяют
+// новым — иначе старые файлы остаются в GitHub мёртвым грузом навсегда.
+// Ошибка удаления не должна ломать основное действие пользователя,
+// поэтому она только логируется.
+async function deleteFromRepo(repoPath, message) {
+  if (!repoPath) return;
+  try {
+    const file = await github.getFile(repoPath);
+    if (file) {
+      await github.deleteFile({ path: repoPath, message, sha: file.sha });
+    }
+  } catch (err) {
+    console.error(`Не удалось удалить файл ${repoPath} из GitHub:`, err.message);
+  }
+}
+
 // Одна оптимизированная версия — для фото художницы и фото к награде.
 async function uploadOptimizedImage(file, folder) {
   const buffer = await image.makeMedium(file.buffer);
@@ -166,10 +186,14 @@ app.post("/admin/home", requireAuth, upload.single("photo"), async (req, res, ne
     data.home.title = req.body.title || "";
     data.home.greeting = req.body.greeting || "";
     data.home.about = req.body.about || "";
+    const oldPhoto = data.home.photo;
     if (req.file) {
       data.home.photo = await uploadOptimizedImage(req.file, "home");
     }
     await store.save("Обновление главной страницы");
+    if (req.file && oldPhoto) {
+      await deleteFromRepo(oldPhoto, "Удаление старого фото главной страницы");
+    }
     res.redirect("/admin?saved=home");
   } catch (err) {
     next(err);
@@ -240,12 +264,18 @@ app.post("/admin/gallery/edit/:id", requireAuth, upload.single("image"), async (
     item.year = req.body.year ? Number(req.body.year) : null;
     item.event = req.body.event || "";
     item.description = req.body.description || "";
+    const oldThumb = item.imageThumb;
+    const oldFull = item.imageFull;
     if (req.file) {
       const { imageThumb, imageFull } = await uploadGalleryImage(req.file, "gallery");
       item.imageThumb = imageThumb;
       item.imageFull = imageFull;
     }
     await store.save(`Изменена картина: ${item.title}`);
+    if (req.file) {
+      await deleteFromRepo(oldThumb, "Удаление старого фото картины");
+      await deleteFromRepo(oldFull, "Удаление старого фото картины");
+    }
     res.redirect("/admin?saved=gallery");
   } catch (err) {
     next(err);
@@ -257,8 +287,10 @@ app.post("/admin/gallery/delete/:id", requireAuth, async (req, res, next) => {
     const data = content();
     const idx = data.gallery.findIndex((i) => i.id === Number(req.params.id));
     if (idx !== -1) {
-      data.gallery.splice(idx, 1);
+      const [removed] = data.gallery.splice(idx, 1);
       await store.save("Удалена картина");
+      await deleteFromRepo(removed.imageThumb, "Удаление фото удалённой картины");
+      await deleteFromRepo(removed.imageFull, "Удаление фото удалённой картины");
     }
     res.redirect("/admin?saved=gallery");
   } catch (err) {
@@ -297,10 +329,14 @@ app.post("/admin/awards/edit/:id", requireAuth, upload.single("image"), async (r
       item.title = req.body.title || "";
       item.year = req.body.year ? Number(req.body.year) : null;
       item.description = req.body.description || "";
+      const oldImage = item.image;
       if (req.file) {
         item.image = await uploadOptimizedImage(req.file, "awards");
       }
       await store.save("Изменена награда");
+      if (req.file && oldImage) {
+        await deleteFromRepo(oldImage, "Удаление старого фото награды");
+      }
     }
     res.redirect("/admin?saved=awards");
   } catch (err) {
@@ -313,8 +349,9 @@ app.post("/admin/awards/delete/:id", requireAuth, async (req, res, next) => {
     const data = content();
     const idx = data.awards.findIndex((i) => i.id === Number(req.params.id));
     if (idx !== -1) {
-      data.awards.splice(idx, 1);
+      const [removed] = data.awards.splice(idx, 1);
       await store.save("Удалена награда");
+      await deleteFromRepo(removed.image, "Удаление фото удалённой награды");
     }
     res.redirect("/admin?saved=awards");
   } catch (err) {
@@ -372,7 +409,7 @@ app.post("/admin/exhibitions/delete/:id", requireAuth, async (req, res, next) =>
   }
 });
 
-// ----- Фото творческого процесса -----
+// ----- Рукоделие (фото творческого процесса) -----
 
 app.post("/admin/process/add", requireAuth, upload.single("image"), async (req, res, next) => {
   try {
@@ -389,7 +426,7 @@ app.post("/admin/process/add", requireAuth, upload.single("image"), async (req, 
       item.imageFull = imageFull;
     }
     data.process.push(item);
-    await store.save("Добавлено фото творческого процесса");
+    await store.save("Добавлено фото рукоделия");
     res.redirect("/admin?saved=process");
   } catch (err) {
     next(err);
@@ -404,13 +441,13 @@ app.post("/admin/process/bulk-add", requireAuth, uploadMany.array("images", 20),
       const { imageThumb, imageFull } = await uploadGalleryImage(file, "process");
       data.process.push({
         id: store.nextId(data.process),
-        title: titleFromFilename(file.originalname),
+        title: "",
         imageThumb,
         imageFull,
       });
     }
     if (files.length > 0) {
-      await store.save(`Добавлено фото творческого процесса: ${files.length}`);
+      await store.save(`Добавлено фото рукоделия: ${files.length}`);
     }
     res.redirect("/admin?saved=process");
   } catch (err) {
@@ -424,12 +461,18 @@ app.post("/admin/process/edit/:id", requireAuth, upload.single("image"), async (
     const item = data.process.find((i) => i.id === Number(req.params.id));
     if (!item) return res.redirect("/admin?saved=notfound");
     item.title = req.body.title || "";
+    const oldThumb = item.imageThumb;
+    const oldFull = item.imageFull;
     if (req.file) {
       const { imageThumb, imageFull } = await uploadGalleryImage(req.file, "process");
       item.imageThumb = imageThumb;
       item.imageFull = imageFull;
     }
-    await store.save("Изменено фото творческого процесса");
+    await store.save("Изменено фото рукоделия");
+    if (req.file) {
+      await deleteFromRepo(oldThumb, "Удаление старого фото рукоделия");
+      await deleteFromRepo(oldFull, "Удаление старого фото рукоделия");
+    }
     res.redirect("/admin?saved=process");
   } catch (err) {
     next(err);
@@ -441,8 +484,10 @@ app.post("/admin/process/delete/:id", requireAuth, async (req, res, next) => {
     const data = content();
     const idx = data.process.findIndex((i) => i.id === Number(req.params.id));
     if (idx !== -1) {
-      data.process.splice(idx, 1);
-      await store.save("Удалено фото творческого процесса");
+      const [removed] = data.process.splice(idx, 1);
+      await store.save("Удалено фото рукоделия");
+      await deleteFromRepo(removed.imageThumb, "Удаление фото удалённого рукоделия");
+      await deleteFromRepo(removed.imageFull, "Удаление фото удалённого рукоделия");
     }
     res.redirect("/admin?saved=process");
   } catch (err) {

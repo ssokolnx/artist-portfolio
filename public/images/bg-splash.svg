@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1294" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22" />
+    </filter>
+    <filter id="softer" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" />
+    </filter>
+  </defs>
+
+  <g filter="url(#soft)" opacity="0.85">
+    <!-- верхний левый угол: фиолетовый + синий -->
+    <ellipse cx="70" cy="30" rx="150" ry="115" fill="#7c4f9e" />
+    <ellipse cx="10" cy="150" rx="70" ry="60" fill="#2f7fa6" />
+    <circle cx="190" cy="20" r="26" fill="#7c4f9e" />
+    <circle cx="230" cy="90" r="14" fill="#7c4f9e" />
+
+    <!-- верхний правый угол: рыжий/коралловый + розовый + фиолетовый -->
+    <ellipse cx="930" cy="60" rx="160" ry="120" fill="#d9642a" />
+    <ellipse cx="845" cy="230" rx="105" ry="90" fill="#e58aa0" />
+    <ellipse cx="935" cy="345" rx="100" ry="110" fill="#8a54a0" />
+    <circle cx="790" cy="140" r="16" fill="#d9642a" />
+    <circle cx="990" cy="200" r="20" fill="#e0a83e" />
+
+    <!-- правый край: крупная разноцветная клякса -->
+    <ellipse cx="985" cy="760" rx="130" ry="95" fill="#8a54a0" />
+    <ellipse cx="920" cy="820" rx="90" ry="70" fill="#c14f96" />
+    <ellipse cx="1000" cy="880" rx="110" ry="55" fill="#2f6ea8" transform="rotate(-25 1000 880)" />
+    <circle cx="860" cy="760" r="18" fill="#e0a83e" />
+    <circle cx="990" cy="960" r="16" fill="#e0a83e" />
+
+    <!-- нижний правый угол: синий + жёлтый -->
+    <ellipse cx="955" cy="1240" rx="110" ry="95" fill="#2f6ea8" />
+    <ellipse cx="880" cy="1265" rx="90" ry="75" fill="#8a54a0" />
+    <circle cx="1000" cy="1150" r="18" fill="#c14f96" />
+
+    <!-- левый край: пурпурная клякса -->
+    <ellipse cx="15" cy="700" rx="95" ry="115" fill="#b03e82" />
+    <circle cx="70" cy="840" r="22" fill="#b03e82" />
+    <circle cx="95" cy="900" r="13" fill="#b03e82" />
+
+    <!-- нижний левый угол: бирюзовый, поднимается по краю -->
+    <ellipse cx="5" cy="1150" rx="150" ry="170" fill="#2f8fa3" />
+    <ellipse cx="45" cy="1000" rx="75" ry="95" fill="#2f8fa3" />
+
+    <!-- нижний край: тёплый золотистый акцент по центру -->
+    <ellipse cx="420" cy="1280" rx="260" ry="80" fill="#e0a83e" opacity="0.5" />
+  </g>
+
+  <g filter="url(#softer)" opacity="0.9">
+    <circle cx="205" cy="55" r="8" fill="#7c4f9e" />
+    <circle cx="965" cy="150" r="7" fill="#d9642a" />
+    <circle cx="900" cy="1000" r="7" fill="#e0a83e" />
+    <circle cx="55" cy="960" r="7" fill="#2f8fa3" />
+  </g>
+</svg>

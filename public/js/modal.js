@@ -40,6 +40,13 @@
 
   document.querySelectorAll("[data-modal-card]").forEach(function (card) {
     card.addEventListener("click", function (e) {
+      // Ctrl/Cmd/Shift/средняя кнопка — отдаём браузеру открыть обычную
+      // ссылку (новая вкладка, «скопировать адрес» и т.д.), не открываем
+      // модалку. Так у карточки остаётся настоящая, доступная для
+      // шаринга и поиска ссылка на /gallery/:id.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        return;
+      }
       e.preventDefault();
       openModal(card);
     });

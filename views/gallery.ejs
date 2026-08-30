@@ -15,10 +15,11 @@
       <p class="empty-state">Картины пока не добавлены.</p>
     <% } else { %>
       <div class="gallery-grid">
-        <% items.forEach(function(item) { %>
-          <button
-            type="button"
-            class="artwork"
+        <% items.forEach(function(item, idx) { %>
+          <a
+            href="/gallery/<%= item.id %>"
+            class="artwork reveal"
+            style="transition-delay: <%= Math.min(idx * 50, 400) %>ms"
             data-modal-card
             data-image="<%= item.imageFull ? rawUrl(item.imageFull) : (item.imageThumb ? rawUrl(item.imageThumb) : '') %>"
             data-title="<%= item.title %>"
@@ -35,7 +36,7 @@
               <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
               <% if (item.event) { %><p class="artwork__event"><%= item.event %></p><% } %>
             </div>
-          </button>
+          </a>
         <% }); %>
       </div>
     <% } %>

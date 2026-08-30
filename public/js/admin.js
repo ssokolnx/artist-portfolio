@@ -37,12 +37,23 @@
       };
 
       xhr.onload = function () {
-        bar.style.width = "100%";
-        if (xhr.responseURL) {
-          window.location.href = xhr.responseURL;
-        } else {
-          window.location.reload();
+        if (xhr.status >= 200 && xhr.status < 400) {
+          bar.style.width = "100%";
+          if (xhr.responseURL) {
+            window.location.href = xhr.responseURL;
+          } else {
+            window.location.reload();
+          }
+          return;
         }
+
+        hideOverlay();
+        var text = (xhr.responseText || "")
+          .replace(/<[^>]*>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        var message = text || ("Сервер вернул ошибку " + xhr.status + ".");
+        window.alert("Не удалось сохранить.\n" + message);
       };
 
       xhr.onerror = function () {
