@@ -26,6 +26,13 @@
     </div>
   </main>
 
+  <% if (home.about) { %>
+    <section class="about wrap">
+      <h2 class="about__heading">О художнике и её творчестве</h2>
+      <p class="about__text"><%= home.about %></p>
+    </section>
+  <% } %>
+
   <%- include('partials/footer') %>
 </body>
 </html>

@@ -175,6 +175,22 @@ a:hover { text-decoration: underline; }
   .hero__grid { grid-template-columns: 1fr; gap: 32px; }
 }
 
+/* ============ О художнике и её творчестве ============ */
+.about { padding: 0 24px 90px; }
+.about__heading {
+  font-family: var(--display);
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+.about__text {
+  font-size: 17px;
+  color: var(--text-secondary);
+  max-width: 68ch;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
 /* ============ Кнопки (Material filled / outlined / text) ============ */
 .button {
   display: inline-flex;

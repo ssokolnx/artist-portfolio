@@ -47,6 +47,9 @@
           <label for="home-greeting">Приветственный текст</label>
           <textarea id="home-greeting" name="greeting" rows="6"><%= home.greeting %></textarea>
 
+          <label for="home-about">О художнике и её творчестве</label>
+          <textarea id="home-about" name="about" rows="8"><%= home.about || "" %></textarea>
+
           <label for="home-photo">Фотография (необязательно — оставьте пустым, чтобы не менять)</label>
           <% if (home.photo) { %>
             <img class="current-photo" src="<%= rawUrl(home.photo) %>" alt="Текущее фото" />

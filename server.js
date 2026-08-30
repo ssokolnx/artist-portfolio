@@ -159,6 +159,7 @@ app.post("/admin/home", requireAuth, upload.single("photo"), async (req, res, ne
     const data = content();
     data.home.title = req.body.title || "";
     data.home.greeting = req.body.greeting || "";
+    data.home.about = req.body.about || "";
     if (req.file) {
       data.home.photo = await uploadOptimizedImage(req.file, "home");
     }
