@@ -4,7 +4,98 @@
     "greeting": "Добро пожаловать на мой сайт. Здесь собраны мои картины, награды и выставки.",
     "photo": "data/images/home/1788114541117-ac1de8d0.jpg"
   },
-  "gallery": [],
+  "gallery": [
+    {
+      "id": 1,
+      "title": "IMG 20250902 WA0007",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124890268-ced4b24b-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124891632-d22f49c5-full.jpg"
+    },
+    {
+      "id": 2,
+      "title": "IMG 20250906 WA0070",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124893671-ed24da5b-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124894780-213e4828-full.jpg"
+    },
+    {
+      "id": 3,
+      "title": "IMG 20251008 WA0010",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124896973-cfa6319b-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124897909-d147a75b-full.jpg"
+    },
+    {
+      "id": 4,
+      "title": "IMG 20260724 214645",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124900278-118604bd-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124901236-0a96af03-full.jpg"
+    },
+    {
+      "id": 5,
+      "title": "IMG 20220514 WA0009",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124903577-89091645-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124904688-033e9ea0-full.jpg"
+    },
+    {
+      "id": 6,
+      "title": "IMG 20220108 WA0001",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124906784-ba99f820-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124907815-1e8f5930-full.jpg"
+    },
+    {
+      "id": 7,
+      "title": "IMG 20240606 WA0016",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124909670-edf2edfd-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124910586-16ae4ebb-full.jpg"
+    },
+    {
+      "id": 8,
+      "title": "IMG 20241214 WA0001",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124912068-2fab1794-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124913368-c04c2f73-full.jpg"
+    },
+    {
+      "id": 9,
+      "title": "IMG 20241228 WA0026",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124914976-24d9b9b1-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124916149-c82e91e3-full.jpg"
+    },
+    {
+      "id": 10,
+      "title": "1784440926177",
+      "year": null,
+      "event": "",
+      "description": "",
+      "imageThumb": "data/images/gallery/1788124918277-5f31a16e-thumb.jpg",
+      "imageFull": "data/images/gallery/1788124919239-c24eabea-full.jpg"
+    }
+  ],
   "awards": [],
   "exhibitions": [
     {
