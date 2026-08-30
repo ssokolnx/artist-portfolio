@@ -16,19 +16,17 @@
     <% } else { %>
       <div class="gallery-grid">
         <% items.forEach(function(item) { %>
-          <figure class="artwork">
+          <a class="artwork" href="/gallery/<%= item.id %>">
             <div class="artwork__frame">
-              <% if (item.image) { %>
-                <img src="<%= rawUrl(item.image) %>" alt="<%= item.title %>" loading="lazy" />
+              <% if (item.imageThumb) { %>
+                <img src="<%= rawUrl(item.imageThumb) %>" alt="<%= item.title %>" loading="lazy" />
               <% } %>
             </div>
-            <figcaption class="artwork__label">
+            <div class="artwork__label">
               <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
-              <% if (item.description) { %>
-                <p class="artwork__desc"><%= item.description %></p>
-              <% } %>
-            </figcaption>
-          </figure>
+              <% if (item.event) { %><p class="artwork__event"><%= item.event %></p><% } %>
+            </div>
+          </a>
         <% }); %>
       </div>
     <% } %>

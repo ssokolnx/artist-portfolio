@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title><%= item.title %> — <%= siteTitle %></title>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="wrap page">
+    <a href="/gallery" class="back-link back-link--page">← Вся галерея</a>
+
+    <div class="artwork-detail">
+      <div class="artwork-detail__image">
+        <% if (item.imageFull) { %>
+          <img src="<%= rawUrl(item.imageFull) %>" alt="<%= item.title %>" />
+        <% } %>
+      </div>
+      <div class="artwork-detail__info">
+        <% if (item.event) { %><p class="eyebrow"><%= item.event %></p><% } %>
+        <h1><%= item.title %></h1>
+        <% if (item.year) { %><p class="artwork-detail__year"><%= item.year %></p><% } %>
+        <% if (item.description) { %><p class="artwork-detail__desc"><%= item.description %></p><% } %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>
