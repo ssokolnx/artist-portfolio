@@ -12,11 +12,10 @@ const image = require("./lib/image");
 const app = express();
 // Ограничение размера на один файл — с запасом для фото с телефона.
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 12 * 1024 * 1024 } });
-// Для массовой загрузки — до 10 картин за раз, чтобы не перегрузить память
-// бесплатного сервера.
+// Для массовой загрузки — до 20 картин за раз.
 const uploadMany = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024, files: 10 },
+  limits: { fileSize: 10 * 1024 * 1024, files: 20 },
 });
 
 app.set("view engine", "ejs");
@@ -132,15 +131,17 @@ async function uploadOptimizedImage(file, folder) {
 
 // Две версии — маленькая (для списков, грузится быстро) и качественная
 // (открывается при клике на картину).
+// Две версии — маленькая (для списков, грузится быстро) и качественная
+// (открывается при клике на картину). Коммиты в GitHub отправляются
+// строго по очереди: если отправить оба файла одновременно, GitHub
+// иногда отклоняет второй коммит с ошибкой 409 (конфликт версий ветки).
 async function uploadGalleryImage(file, folder) {
   const [thumbBuffer, fullBuffer] = await Promise.all([
     image.makeThumb(file.buffer),
     image.makeFull(file.buffer),
   ]);
-  const [imageThumb, imageFull] = await Promise.all([
-    saveToRepo(thumbBuffer, folder, "-thumb", ".jpg"),
-    saveToRepo(fullBuffer, folder, "-full", ".jpg"),
-  ]);
+  const imageThumb = await saveToRepo(thumbBuffer, folder, "-thumb", ".jpg");
+  const imageFull = await saveToRepo(fullBuffer, folder, "-full", ".jpg");
   return { imageThumb, imageFull };
 }
 
@@ -198,7 +199,7 @@ app.post("/admin/gallery/add", requireAuth, upload.single("image"), async (req, 
 // Быстрое добавление сразу нескольких картин: одна фотография — одна
 // новая запись в галерее с названием по имени файла. Год, описание и
 // конкурс можно дозаполнить позже через «Изменить».
-app.post("/admin/gallery/bulk-add", requireAuth, uploadMany.array("images", 10), async (req, res, next) => {
+app.post("/admin/gallery/bulk-add", requireAuth, uploadMany.array("images", 20), async (req, res, next) => {
   try {
     const data = content();
     const files = req.files || [];
