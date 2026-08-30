@@ -4,7 +4,15 @@
     "greeting": "Добро пожаловать на мой сайт. Здесь собраны мои картины, награды и выставки.",
     "photo": "data/images/home/1788114541117-ac1de8d0.jpg"
   },
-  "gallery": [],
+  "gallery": [
+    {
+      "id": 1,
+      "title": "Драмтеатр",
+      "year": 2026,
+      "description": "Лала",
+      "image": "data/images/gallery/1788114762681-5f08e466.png"
+    }
+  ],
   "awards": [],
   "exhibitions": []
 }
