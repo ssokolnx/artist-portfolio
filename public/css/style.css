@@ -155,6 +155,14 @@ a:hover { text-decoration: underline; }
   margin: 0 0 18px;
   line-height: 1.1;
 }
+.hero__tagline {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  margin: 0 0 22px;
+}
 .hero__greeting {
   font-size: 17px;
   color: var(--text-secondary);
