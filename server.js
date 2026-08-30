@@ -54,7 +54,10 @@ app.use((req, res, next) => {
 // ---------- Публичные страницы ----------
 
 app.get("/", (req, res) => {
-  res.render("index", { home: content().home });
+  const featured = [...content().gallery]
+    .sort((a, b) => (b.year || 0) - (a.year || 0))
+    .slice(0, 3);
+  res.render("index", { home: content().home, featured });
 });
 
 app.get("/gallery", (req, res) => {
