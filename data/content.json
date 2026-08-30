@@ -8,10 +8,10 @@
   "gallery": [
     {
       "id": 1,
-      "title": "IMG 20250902 WA0007",
-      "year": null,
-      "event": "",
-      "description": "",
+      "title": "кораблик",
+      "year": 2022,
+      "event": "какой-то конкурс",
+      "description": "какое-то описание",
       "imageThumb": "data/images/gallery/1788124890268-ced4b24b-thumb.jpg",
       "imageFull": "data/images/gallery/1788124891632-d22f49c5-full.jpg"
     },
