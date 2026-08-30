@@ -11,6 +11,13 @@
       "year": 2026,
       "description": "Лала",
       "image": "data/images/gallery/1788114762681-5f08e466.png"
+    },
+    {
+      "id": 2,
+      "title": "Набережная",
+      "year": 2026,
+      "description": "Рншш",
+      "image": "data/images/gallery/1788117320198-5e425634.png"
     }
   ],
   "awards": [],
