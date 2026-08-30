@@ -17,10 +17,10 @@
     },
     {
       "id": 2,
-      "title": "IMG 20250906 WA0070",
-      "year": null,
-      "event": "",
-      "description": "",
+      "title": "вино",
+      "year": 2022,
+      "event": "какой то конкурс",
+      "description": "какое-то описание",
       "imageThumb": "data/images/gallery/1788124893671-ed24da5b-thumb.jpg",
       "imageFull": "data/images/gallery/1788124894780-213e4828-full.jpg"
     },
