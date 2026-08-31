@@ -28,15 +28,12 @@
   <% if (featured && featured.length > 0) { %>
     <section class="featured">
       <div class="wrap featured__head">
-        <div>
-          <p class="eyebrow">Избранное</p>
-          <h2 class="featured__heading">Работы</h2>
-        </div>
+        <h2 class="featured__heading">Работы</h2>
         <a href="/gallery" class="featured__all">Вся галерея →</a>
       </div>
 
       <div class="carousel">
-        <div class="carousel__track" style="--carousel-count: <%= featured.length %>">
+        <div class="carousel__track">
           <% // Список удваиваем, чтобы прокрутка выглядела бесконечной и без рывка в конце %>
           <% [...featured, ...featured].forEach(function(item, idx) { %>
             <a
@@ -79,5 +76,6 @@
   <%- include('partials/footer') %>
   <script src="/js/modal.js"></script>
   <script src="/js/reveal.js"></script>
+  <script src="/js/carousel.js"></script>
 </body>
 </html>
