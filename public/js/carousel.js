@@ -5,13 +5,35 @@
     var track = carousel.querySelector(".carousel__track");
     if (!track) return;
 
-    // Список внутри уже отрисован дважды (см. index.ejs) — ровно на середине
-    // общей ширины начинается точная копия начала, поэтому прыжок туда
-    // назад совершенно незаметен и создаёт иллюзию бесконечной ленты.
-    var half = track.scrollWidth / 2;
+    // В разметке (index.ejs) список отрисован тремя наборами подряд.
+    // Ширина одного набора — треть общей ширины ленты. Прокрутка стартует
+    // с начала среднего набора: слева и справа остаётся целый набор про
+    // запас, поэтому крутить можно и вперёд, и назад — а когда человек
+    // подходит близко к любому краю, лента незаметно "перепрыгивает" на
+    // ту же позицию в соседнем наборе (наборы одинаковые, поэтому прыжок
+    // не видно).
+    var setWidth = 0;
+
+    function measure() {
+      setWidth = track.scrollWidth / 3;
+    }
+    measure();
+    carousel.scrollLeft = setWidth;
+
     window.addEventListener("resize", function () {
-      half = track.scrollWidth / 2;
+      var offsetInSet = setWidth > 0 ? carousel.scrollLeft - setWidth : 0;
+      measure();
+      carousel.scrollLeft = setWidth + offsetInSet;
     });
+
+    function keepInBounds() {
+      if (setWidth <= 0) return;
+      if (carousel.scrollLeft < setWidth * 0.5) {
+        carousel.scrollLeft += setWidth;
+      } else if (carousel.scrollLeft > setWidth * 1.5) {
+        carousel.scrollLeft -= setWidth;
+      }
+    }
 
     var paused = false;
     var resumeTimer = null;
@@ -25,11 +47,11 @@
       resumeTimer = setTimeout(function () {
         paused = false;
       }, 1800);
+      keepInBounds();
     }
 
     // Прикосновение, клик или прокрутка колесом мыши — сразу останавливают
-    // автопрокрутку и отдают управление человеку. Через паузу после того,
-    // как палец/курсор ушли — лента снова едет сама.
+    // автопрокрутку и отдают управление человеку, в любую сторону.
     ["pointerdown", "wheel"].forEach(function (evt) {
       carousel.addEventListener(evt, pause, { passive: true });
     });
@@ -38,15 +60,13 @@
       carousel.addEventListener(evt, scheduleResume, { passive: true });
     });
 
-    if (reduceMotion || half <= carousel.clientWidth) return;
+    if (reduceMotion || setWidth <= carousel.clientWidth) return;
 
     var speed = 0.45; // пикселей за кадр — неторопливый темп
     function tick() {
       if (!paused) {
         carousel.scrollLeft += speed;
-        if (carousel.scrollLeft >= half) {
-          carousel.scrollLeft -= half;
-        }
+        keepInBounds();
       }
       requestAnimationFrame(tick);
     }
