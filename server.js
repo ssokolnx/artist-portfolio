@@ -54,7 +54,10 @@ app.use((req, res, next) => {
 // ---------- Публичные страницы ----------
 
 app.get("/", (req, res) => {
-  const featured = [...content().gallery]
+  const gallery = content().gallery;
+  const marked = gallery.filter((i) => i.featured);
+  const featured = (marked.length > 0 ? marked : gallery)
+    .slice()
     .sort((a, b) => (b.year || 0) - (a.year || 0))
     .slice(0, 3);
   res.render("index", { home: content().home, featured });
@@ -214,6 +217,7 @@ app.post("/admin/gallery/add", requireAuth, upload.single("image"), async (req, 
       year: req.body.year ? Number(req.body.year) : null,
       event: req.body.event || "",
       description: req.body.description || "",
+      featured: req.body.featured === "on",
       imageThumb: null,
       imageFull: null,
     };
@@ -267,6 +271,7 @@ app.post("/admin/gallery/edit/:id", requireAuth, upload.single("image"), async (
     item.year = req.body.year ? Number(req.body.year) : null;
     item.event = req.body.event || "";
     item.description = req.body.description || "";
+    item.featured = req.body.featured === "on";
     const oldThumb = item.imageThumb;
     const oldFull = item.imageFull;
     if (req.file) {
