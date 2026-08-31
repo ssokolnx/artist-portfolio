@@ -4,18 +4,13 @@
       <span class="site-header__eyebrow">Творческое портфолио</span>
       <a href="/" class="site-title"><%= siteTitle %></a>
     </div>
-
-    <input type="checkbox" id="nav-toggle" class="nav-toggle-input" />
-    <label for="nav-toggle" class="nav-toggle-btn" aria-label="Меню">
-      <span></span><span></span><span></span>
-    </label>
-
-    <nav class="site-nav">
-      <a href="/">Главная</a>
-      <a href="/gallery">Галерея</a>
-      <a href="/process">Рукоделие</a>
-      <a href="/awards">Награды</a>
-      <a href="/exhibitions">Выставки</a>
-    </nav>
   </div>
+
+  <nav class="site-nav">
+    <a href="/" class="<% if (currentPath === '/') { %>is-active<% } %>">Главная</a>
+    <a href="/gallery" class="<% if (currentPath && currentPath.startsWith('/gallery')) { %>is-active<% } %>">Галерея</a>
+    <a href="/process" class="<% if (currentPath === '/process') { %>is-active<% } %>">Рукоделие</a>
+    <a href="/awards" class="<% if (currentPath === '/awards') { %>is-active<% } %>">Награды</a>
+    <a href="/exhibitions" class="<% if (currentPath === '/exhibitions') { %>is-active<% } %>">Выставки</a>
+  </nav>
 </header>
