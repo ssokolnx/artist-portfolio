@@ -881,34 +881,51 @@ a:hover { text-decoration: underline; }
   justify-content: center;
 }
 .tile__panel .card-form { max-width: none; box-shadow: none; padding: 0; }
+.tile__panel-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-s);
+  box-shadow: var(--e1);
+  margin: 0 0 14px;
+}
 
 @media (max-width: 420px) {
   .tile-grid { gap: 10px; }
   .tile__panel { padding: 24px 10px; }
 }
 
-/* Свёрнутый по умолчанию блок «Добавить картины / фото» */
+/* Свёрнутый по умолчанию блок «Добавить картины / фото / награду / выставку».
+   Сплошная заливка и тень — чтобы кнопка сразу бросалась в глаза среди
+   остальных элементов страницы. */
 .add-section { margin-bottom: 28px; }
 .add-section__summary {
   cursor: pointer;
   list-style: none;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 14px 18px;
-  border: 1.5px dashed var(--outline);
-  border-radius: var(--radius-m);
-  color: var(--primary);
+  padding: 15px 20px;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--e2);
+  color: var(--on-primary);
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 15px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
+.add-section__summary:hover { box-shadow: var(--e3); transform: translateY(-1px); }
 .add-section__summary::-webkit-details-marker { display: none; }
 .add-section[open] .add-section__summary {
   margin-bottom: 18px;
-  border-style: solid;
-  background: var(--primary-container);
-  border-color: var(--primary-container);
-  color: var(--on-primary-container);
+  background: var(--text);
+  color: #fff;
+}
+
+@media (max-width: 500px) {
+  .add-section__summary { width: 100%; }
 }
 
 /* Список существующих элементов */
@@ -1002,7 +1019,7 @@ a:hover { text-decoration: underline; }
 .modal__close:hover { background: #fff; }
 
 .modal__image-wrap {
-  background: var(--surface-alt);
+  background: transparent;
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
