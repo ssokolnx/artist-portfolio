@@ -118,14 +118,10 @@ a:hover { text-decoration: underline; }
 }
 
 .site-header__row {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 16px;
-  padding-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 12px;
+  padding-top: 14px;
+  padding-bottom: 10px;
 }
 
 .site-header__brand { display: flex; flex-direction: column; gap: 3px; justify-content: center; }
@@ -146,83 +142,47 @@ a:hover { text-decoration: underline; }
 }
 .site-title:hover { text-decoration: none; color: var(--primary); }
 
-.site-nav { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+/* Разделы сайта всегда видны — ничего не спрятано за иконкой меню.
+   На узких экранах строка становится горизонтально прокручиваемой лентой. */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 24px 12px;
+}
+.site-nav::-webkit-scrollbar { display: none; }
 .site-nav a {
+  flex: 0 0 auto;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
-  padding: 10px 16px;
+  padding: 8px 15px;
   border-radius: var(--radius-pill);
+  white-space: nowrap;
+  border: 1.5px solid transparent;
 }
 .site-nav a:hover {
   color: var(--primary);
   background: var(--primary-container);
   text-decoration: none;
 }
-
-/* Кнопка-гамбургер и переключатель — видны только на телефоне (см. медиа-запрос ниже) */
-.nav-toggle-input { display: none; }
-.nav-toggle-btn { display: none; }
+.site-nav a.is-active {
+  color: var(--primary);
+  border-color: var(--primary);
+  text-decoration: none;
+}
 
 @media (max-width: 760px) {
-  .site-header__row {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    flex-wrap: nowrap;
-  }
+  .site-header__row { padding-top: 10px; padding-bottom: 8px; }
   .site-header__eyebrow { font-size: 9px; }
   .site-title { font-size: 16px; }
-
-  .nav-toggle-btn {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-s);
-    background: var(--surface-alt);
-    border: 1px solid var(--outline);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .nav-toggle-btn span {
-    display: block;
-    width: 18px;
-    height: 2px;
-    background: var(--text);
-    border-radius: 2px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  .site-nav {
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    background: var(--surface);
-    box-shadow: var(--e2);
-    padding: 8px 24px 16px;
-  }
-  .site-nav a {
-    padding: 13px 4px;
-    border-radius: 0;
-    border-bottom: 1px solid var(--outline);
-    text-align: left;
-  }
-  .site-nav a:hover { background: none; }
-
-  .nav-toggle-input:checked ~ .site-nav { display: flex; }
-  .nav-toggle-input:checked ~ .nav-toggle-btn span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-  .nav-toggle-input:checked ~ .nav-toggle-btn span:nth-child(2) { opacity: 0; }
-  .nav-toggle-input:checked ~ .nav-toggle-btn span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-  .site-header { position: sticky; }
+  .site-nav { padding: 0 16px 10px; gap: 6px; }
+  .site-nav a { padding: 7px 13px; font-size: 13px; }
 }
 
 .site-footer { margin-top: 80px; }
@@ -285,7 +245,7 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============ Избранные работы (главная) ============ */
-.featured { padding: 0 24px 72px; }
+.featured { padding-bottom: 72px; }
 .featured__head {
   display: flex;
   align-items: flex-end;
@@ -305,14 +265,44 @@ a:hover { text-decoration: underline; }
   font-size: 14.5px;
   white-space: nowrap;
 }
-.featured__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
+
+/* Бесшовная горизонтальная карусель: список работ отрисован дважды подряд,
+   лента едет влево на 50% своей ширины — в этот момент видимая часть
+   в точности повторяет начало, поэтому переход незаметен и петля кажется
+   бесконечной. Наведение курсора или фокус клавиатурой останавливают
+   анимацию, чтобы можно было спокойно разглядеть работу и кликнуть по ней. */
+.carousel {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent);
+  mask-image: linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent);
+}
+.carousel__track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: carousel-scroll linear infinite;
+  animation-duration: calc(var(--carousel-count, 6) * 4.5s);
+}
+.carousel:hover .carousel__track,
+.carousel:focus-within .carousel__track,
+.carousel:active .carousel__track {
+  animation-play-state: paused;
+}
+.carousel__item {
+  flex: 0 0 220px;
+  width: 220px;
+}
+@keyframes carousel-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel__track { animation: none; }
 }
 
 @media (max-width: 600px) {
-  .featured__grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .carousel__item { flex-basis: 168px; width: 168px; }
+  .carousel__track { gap: 12px; }
 }
 
 /* ============ О художнике и её творчестве ============ */
@@ -599,26 +589,31 @@ a:hover { text-decoration: underline; }
   box-shadow: var(--e1);
 }
 
-/* Вкладки на чистом CSS, без JavaScript — стиль Material segmented tabs */
+/* Вкладки на чистом CSS, без JavaScript — компактная лента с горизонтальной
+   прокруткой, не разрастается на весь экран на телефоне */
 .tab-input { display: none; }
 .tab-buttons {
   display: flex;
-  gap: 6px;
-  background: var(--surface);
-  padding: 6px;
-  border-radius: var(--radius-pill);
-  box-shadow: var(--e1);
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  width: fit-content;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px 2px 14px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--outline);
 }
+.tab-buttons::-webkit-scrollbar { display: none; }
 .tab-button {
-  padding: 11px 20px;
+  flex: 0 0 auto;
+  padding: 9px 16px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14.5px;
+  font-size: 13.5px;
   color: var(--text-secondary);
+  background: var(--surface);
   border-radius: var(--radius-pill);
+  box-shadow: var(--e1);
+  white-space: nowrap;
 }
 .tab-panel { display: none; }
 #tab-home:checked ~ .tab-buttons label[for="tab-home"],
@@ -691,6 +686,143 @@ a:hover { text-decoration: underline; }
 .card-form .button { align-self: flex-start; margin-top: 18px; }
 .current-photo { max-width: 200px; border-radius: var(--radius-s); margin: 8px 0; box-shadow: var(--e1); }
 
+/* Под-вкладки внутри раздела: «Добавить одну» / «Добавить сразу несколько» */
+.subtabs { margin-bottom: 8px; }
+.subtab-input { display: none; }
+.subtab-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.subtab-button {
+  flex: 1;
+  text-align: center;
+  padding: 11px 10px;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1.5px solid var(--outline);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+}
+.subtab-panel { display: none; }
+#gadd-one:checked ~ .subtab-buttons label[for="gadd-one"],
+#gadd-many:checked ~ .subtab-buttons label[for="gadd-many"],
+#padd-one:checked ~ .subtab-buttons label[for="padd-one"],
+#padd-many:checked ~ .subtab-buttons label[for="padd-many"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
+}
+#gadd-one:checked ~ .subtab-panel--one,
+#gadd-many:checked ~ .subtab-panel--many,
+#padd-one:checked ~ .subtab-panel--one,
+#padd-many:checked ~ .subtab-panel--many {
+  display: block;
+}
+
+/* Опасная зона — кнопка «Удалить» намеренно отделена от «Сохранить»,
+   находится внутри развёрнутой карточки редактирования, а не рядом с
+   остальными действиями, чтобы её нельзя было задеть случайно. */
+.danger-zone {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--outline);
+}
+.danger-zone__label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+}
+
+/* Плитки в 2 колонки — для галереи и рукоделия */
+.tile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 640px;
+}
+.tile {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-m);
+  box-shadow: var(--e1);
+  overflow: hidden;
+}
+.tile:has(> details[open]) { grid-column: 1 / -1; }
+.tile details { height: 100%; }
+.tile summary {
+  cursor: pointer;
+  list-style: none;
+  position: relative;
+  display: block;
+}
+.tile summary::-webkit-details-marker { display: none; }
+.tile__thumb {
+  aspect-ratio: 1 / 1;
+  background: var(--surface-alt);
+  overflow: hidden;
+}
+.tile__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tile__title {
+  padding: 9px 11px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tile__edit-hint {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  box-shadow: var(--e1);
+}
+.tile__star-form { position: absolute; top: 8px; left: 8px; z-index: 3; margin: 0; }
+.tile__star {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--on-primary-container);
+  background: var(--primary-container);
+  box-shadow: var(--e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tile__star--off {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.92);
+}
+.tile__star:active { transform: scale(0.92); }
+.tile__panel {
+  padding: 16px;
+  border-top: 1px solid var(--outline);
+}
+.tile__panel .card-form { max-width: none; box-shadow: none; padding: 0; }
+
+@media (max-width: 420px) {
+  .tile-grid { gap: 10px; }
+}
+
 /* Список существующих элементов */
 .item-list { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
 .item-card {
@@ -719,6 +851,7 @@ a:hover { text-decoration: underline; }
   font-size: 14px;
 }
 .item-card .card-form { margin-top: 14px; max-width: none; box-shadow: none; background: var(--surface-alt); }
+.item-card .danger-zone { margin-left: 0; }
 .inline-form { margin-top: 10px; }
 
 @media (max-width: 560px) {
