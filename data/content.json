@@ -95,7 +95,8 @@
       "event": "",
       "description": "",
       "imageThumb": "data/images/gallery/1788124918277-5f31a16e-thumb.jpg",
-      "imageFull": "data/images/gallery/1788124919239-c24eabea-full.jpg"
+      "imageFull": "data/images/gallery/1788124919239-c24eabea-full.jpg",
+      "featured": true
     }
   ],
   "awards": [
