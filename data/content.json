@@ -13,7 +13,8 @@
       "event": "какой-то конкурс",
       "description": "какое-то описание",
       "imageThumb": "data/images/gallery/1788124890268-ced4b24b-thumb.jpg",
-      "imageFull": "data/images/gallery/1788124891632-d22f49c5-full.jpg"
+      "imageFull": "data/images/gallery/1788124891632-d22f49c5-full.jpg",
+      "featured": true
     },
     {
       "id": 2,
