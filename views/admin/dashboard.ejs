@@ -68,51 +68,54 @@
 
       <!-- ===== ГАЛЕРЕЯ ===== -->
       <section class="tab-panel tab-panel--gallery">
-        <div class="subtabs">
-          <input type="radio" name="gallery-add-mode" id="gadd-one" class="subtab-input" checked>
-          <input type="radio" name="gallery-add-mode" id="gadd-many" class="subtab-input">
-          <div class="subtab-buttons">
-            <label for="gadd-one" class="subtab-button">Добавить одну картину</label>
-            <label for="gadd-many" class="subtab-button">Добавить сразу несколько</label>
-          </div>
+        <details class="add-section">
+          <summary class="add-section__summary">＋ Добавить картины</summary>
 
-          <div class="subtab-panel subtab-panel--one">
-            <form method="POST" action="/admin/gallery/add" enctype="multipart/form-data" class="card-form">
-              <label>Название картины</label>
-              <input type="text" name="title" required />
-              <label>Год</label>
-              <input type="number" name="year" placeholder="например, 2021" />
-              <label>Конкурс или мероприятие (необязательно)</label>
-              <input type="text" name="event" placeholder="например, «Весенний вернисаж 2021»" />
-              <label>Описание (необязательно)</label>
-              <textarea name="description" rows="3"></textarea>
-              <label class="checkbox-label">
-                <input type="checkbox" name="featured" />
-                Показывать в «Избранном» на главной странице
-              </label>
-              <label>Фотография картины</label>
-              <input type="file" name="image" accept="image/*" required />
-              <button type="submit" class="button">Добавить в галерею</button>
-            </form>
-          </div>
+          <div class="subtabs">
+            <input type="radio" name="gallery-add-mode" id="gadd-one" class="subtab-input" checked>
+            <input type="radio" name="gallery-add-mode" id="gadd-many" class="subtab-input">
+            <div class="subtab-buttons">
+              <label for="gadd-one" class="subtab-button">Добавить одну картину</label>
+              <label for="gadd-many" class="subtab-button">Добавить сразу несколько</label>
+            </div>
 
-          <div class="subtab-panel subtab-panel--many">
-            <p class="hint">
-              Выберите до 20 фотографий сразу — каждая станет отдельной картиной
-              в галерее с названием по имени файла. Год, конкурс и описание
-              можно будет дозаполнить у каждой картины через «Изменить». Пока не
-              отметите картины как избранные, на главной будут показываться
-              просто самые новые по году.
-            </p>
-            <form method="POST" action="/admin/gallery/bulk-add" enctype="multipart/form-data" class="card-form">
-              <label>Фотографии картин</label>
-              <input type="file" name="images" accept="image/*" multiple required />
-              <button type="submit" class="button">Добавить все картины</button>
-            </form>
+            <div class="subtab-panel subtab-panel--one">
+              <form method="POST" action="/admin/gallery/add" enctype="multipart/form-data" class="card-form">
+                <label>Название картины</label>
+                <input type="text" name="title" required />
+                <label>Год</label>
+                <input type="number" name="year" placeholder="например, 2021" />
+                <label>Конкурс или мероприятие (необязательно)</label>
+                <input type="text" name="event" placeholder="например, «Весенний вернисаж 2021»" />
+                <label>Описание (необязательно)</label>
+                <textarea name="description" rows="3"></textarea>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="featured" />
+                  Показывать в «Избранном» на главной странице
+                </label>
+                <label>Фотография картины</label>
+                <input type="file" name="image" accept="image/*" required />
+                <button type="submit" class="button">Добавить в галерею</button>
+              </form>
+            </div>
+
+            <div class="subtab-panel subtab-panel--many">
+              <p class="hint">
+                Выберите до 20 фотографий сразу — каждая станет отдельной картиной
+                в галерее с названием по имени файла. Год, конкурс и описание
+                можно будет дозаполнить у каждой картины через «Изменить».
+              </p>
+              <form method="POST" action="/admin/gallery/bulk-add" enctype="multipart/form-data" class="card-form">
+                <label>Фотографии картин</label>
+                <input type="file" name="images" accept="image/*" multiple required />
+                <button type="submit" class="button">Добавить все картины</button>
+              </form>
+            </div>
           </div>
-        </div>
+        </details>
 
         <h2 class="section-gap">Все картины</h2>
+        <p class="hint">Нажмите на звёздочку — картина появится в карусели на главной первой. Нажмите на саму картину — откроется редактирование.</p>
         <% if (gallery.length === 0) { %>
           <p class="hint">Пока ничего не добавлено.</p>
         <% } %>
@@ -135,28 +138,31 @@
                   <div class="tile__title"><%= item.title %></div>
                 </summary>
                 <div class="tile__panel">
-                  <form method="POST" action="/admin/gallery/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
-                    <label>Название</label>
-                    <input type="text" name="title" value="<%= item.title %>" required />
-                    <label>Год</label>
-                    <input type="number" name="year" value="<%= item.year || '' %>" />
-                    <label>Конкурс или мероприятие</label>
-                    <input type="text" name="event" value="<%= item.event || '' %>" />
-                    <label>Описание</label>
-                    <textarea name="description" rows="3"><%= item.description %></textarea>
-                    <label class="checkbox-label">
-                      <input type="checkbox" name="featured" <% if (item.featured) { %>checked<% } %> />
-                      Показывать в «Избранном» на главной странице
-                    </label>
-                    <label>Новая фотография (необязательно)</label>
-                    <input type="file" name="image" accept="image/*" />
-                    <button type="submit" class="button button--small">Сохранить изменения</button>
-                  </form>
-                  <div class="danger-zone">
-                    <p class="danger-zone__label">Опасная зона</p>
-                    <form method="POST" action="/admin/gallery/delete/<%= item.id %>" data-confirm="Удалить эту картину? Отменить будет нельзя." class="inline-form">
-                      <button type="submit" class="button button--danger button--small">Удалить картину</button>
+                  <div class="tile__panel-card">
+                    <button type="button" class="tile__panel-close" aria-label="Закрыть">✕</button>
+                    <form method="POST" action="/admin/gallery/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
+                      <label>Название</label>
+                      <input type="text" name="title" value="<%= item.title %>" required />
+                      <label>Год</label>
+                      <input type="number" name="year" value="<%= item.year || '' %>" />
+                      <label>Конкурс или мероприятие</label>
+                      <input type="text" name="event" value="<%= item.event || '' %>" />
+                      <label>Описание</label>
+                      <textarea name="description" rows="3"><%= item.description %></textarea>
+                      <label class="checkbox-label">
+                        <input type="checkbox" name="featured" <% if (item.featured) { %>checked<% } %> />
+                        Показывать в «Избранном» на главной странице
+                      </label>
+                      <label>Новая фотография (необязательно)</label>
+                      <input type="file" name="image" accept="image/*" />
+                      <button type="submit" class="button button--small">Сохранить изменения</button>
                     </form>
+                    <div class="danger-zone">
+                      <p class="danger-zone__label">Опасная зона</p>
+                      <form method="POST" action="/admin/gallery/delete/<%= item.id %>" data-confirm="Удалить эту картину? Отменить будет нельзя." class="inline-form">
+                        <button type="submit" class="button button--danger button--small">Удалить картину</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </details>
@@ -269,36 +275,40 @@
 
       <!-- ===== РУКОДЕЛИЕ ===== -->
       <section class="tab-panel tab-panel--process">
-        <div class="subtabs">
-          <input type="radio" name="process-add-mode" id="padd-one" class="subtab-input" checked>
-          <input type="radio" name="process-add-mode" id="padd-many" class="subtab-input">
-          <div class="subtab-buttons">
-            <label for="padd-one" class="subtab-button">Добавить одно фото</label>
-            <label for="padd-many" class="subtab-button">Добавить сразу несколько</label>
-          </div>
+        <details class="add-section">
+          <summary class="add-section__summary">＋ Добавить фото</summary>
 
-          <div class="subtab-panel subtab-panel--one">
-            <form method="POST" action="/admin/process/add" enctype="multipart/form-data" class="card-form">
-              <label>Подпись (необязательно)</label>
-              <input type="text" name="title" placeholder="например, «В мастерской»" />
-              <label>Фотография</label>
-              <input type="file" name="image" accept="image/*" required />
-              <button type="submit" class="button">Добавить фото</button>
-            </form>
-          </div>
+          <div class="subtabs">
+            <input type="radio" name="process-add-mode" id="padd-one" class="subtab-input" checked>
+            <input type="radio" name="process-add-mode" id="padd-many" class="subtab-input">
+            <div class="subtab-buttons">
+              <label for="padd-one" class="subtab-button">Добавить одно фото</label>
+              <label for="padd-many" class="subtab-button">Добавить сразу несколько</label>
+            </div>
 
-          <div class="subtab-panel subtab-panel--many">
-            <p class="hint">
-              Выберите до 20 фотографий сразу — подпись можно будет добавить
-              позже у каждого фото через «Изменить».
-            </p>
-            <form method="POST" action="/admin/process/bulk-add" enctype="multipart/form-data" class="card-form">
-              <label>Фотографии</label>
-              <input type="file" name="images" accept="image/*" multiple required />
-              <button type="submit" class="button">Добавить все фото</button>
-            </form>
+            <div class="subtab-panel subtab-panel--one">
+              <form method="POST" action="/admin/process/add" enctype="multipart/form-data" class="card-form">
+                <label>Подпись (необязательно)</label>
+                <input type="text" name="title" placeholder="например, «В мастерской»" />
+                <label>Фотография</label>
+                <input type="file" name="image" accept="image/*" required />
+                <button type="submit" class="button">Добавить фото</button>
+              </form>
+            </div>
+
+            <div class="subtab-panel subtab-panel--many">
+              <p class="hint">
+                Выберите до 20 фотографий сразу — подпись можно будет добавить
+                позже у каждого фото через «Изменить».
+              </p>
+              <form method="POST" action="/admin/process/bulk-add" enctype="multipart/form-data" class="card-form">
+                <label>Фотографии</label>
+                <input type="file" name="images" accept="image/*" multiple required />
+                <button type="submit" class="button">Добавить все фото</button>
+              </form>
+            </div>
           </div>
-        </div>
+        </details>
 
         <h2 class="section-gap">Все фото</h2>
         <% if (process.length === 0) { %>
@@ -316,18 +326,21 @@
                   <div class="tile__title"><%= item.title || 'Без подписи' %></div>
                 </summary>
                 <div class="tile__panel">
-                  <form method="POST" action="/admin/process/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
-                    <label>Подпись</label>
-                    <input type="text" name="title" value="<%= item.title || '' %>" />
-                    <label>Новая фотография (необязательно)</label>
-                    <input type="file" name="image" accept="image/*" />
-                    <button type="submit" class="button button--small">Сохранить изменения</button>
-                  </form>
-                  <div class="danger-zone">
-                    <p class="danger-zone__label">Опасная зона</p>
-                    <form method="POST" action="/admin/process/delete/<%= item.id %>" data-confirm="Удалить это фото?" class="inline-form">
-                      <button type="submit" class="button button--danger button--small">Удалить фото</button>
+                  <div class="tile__panel-card">
+                    <button type="button" class="tile__panel-close" aria-label="Закрыть">✕</button>
+                    <form method="POST" action="/admin/process/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
+                      <label>Подпись</label>
+                      <input type="text" name="title" value="<%= item.title || '' %>" />
+                      <label>Новая фотография (необязательно)</label>
+                      <input type="file" name="image" accept="image/*" />
+                      <button type="submit" class="button button--small">Сохранить изменения</button>
                     </form>
+                    <div class="danger-zone">
+                      <p class="danger-zone__label">Опасная зона</p>
+                      <form method="POST" action="/admin/process/delete/<%= item.id %>" data-confirm="Удалить это фото?" class="inline-form">
+                        <button type="submit" class="button button--danger button--small">Удалить фото</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </details>
