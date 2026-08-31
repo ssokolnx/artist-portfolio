@@ -26,37 +26,41 @@
   </main>
 
   <% if (featured && featured.length > 0) { %>
-    <section class="featured wrap">
-      <div class="featured__head">
+    <section class="featured">
+      <div class="wrap featured__head">
         <div>
           <p class="eyebrow">Избранное</p>
           <h2 class="featured__heading">Работы</h2>
         </div>
         <a href="/gallery" class="featured__all">Вся галерея →</a>
       </div>
-      <div class="featured__grid">
-        <% featured.forEach(function(item, idx) { %>
-          <a
-            href="/gallery/<%= item.id %>"
-            class="artwork reveal"
-            style="transition-delay: <%= idx * 60 %>ms"
-            data-modal-card
-            data-image="<%= item.imageFull ? rawUrl(item.imageFull) : (item.imageThumb ? rawUrl(item.imageThumb) : '') %>"
-            data-title="<%= item.title %>"
-            data-year="<%= item.year || '' %>"
-            data-event="<%= item.event || '' %>"
-            data-description="<%= item.description || '' %>"
-          >
-            <div class="artwork__frame">
-              <% if (item.imageThumb) { %>
-                <img src="<%= rawUrl(item.imageThumb) %>" alt="<%= item.title %>" loading="lazy" />
-              <% } %>
-            </div>
-            <div class="artwork__label">
-              <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
-            </div>
-          </a>
-        <% }); %>
+
+      <div class="carousel">
+        <div class="carousel__track" style="--carousel-count: <%= featured.length %>">
+          <% // Список удваиваем, чтобы прокрутка выглядела бесконечной и без рывка в конце %>
+          <% [...featured, ...featured].forEach(function(item, idx) { %>
+            <a
+              href="/gallery/<%= item.id %>"
+              class="artwork carousel__item"
+              data-modal-card
+              data-image="<%= item.imageFull ? rawUrl(item.imageFull) : (item.imageThumb ? rawUrl(item.imageThumb) : '') %>"
+              data-title="<%= item.title %>"
+              data-year="<%= item.year || '' %>"
+              data-event="<%= item.event || '' %>"
+              data-description="<%= item.description || '' %>"
+              <% if (idx >= featured.length) { %>aria-hidden="true" tabindex="-1"<% } %>
+            >
+              <div class="artwork__frame">
+                <% if (item.imageThumb) { %>
+                  <img src="<%= rawUrl(item.imageThumb) %>" alt="<%= item.title %>" loading="lazy" />
+                <% } %>
+              </div>
+              <div class="artwork__label">
+                <span class="artwork__title"><%= item.title %></span><% if (item.year) { %>, <span class="artwork__year"><%= item.year %></span><% } %>
+              </div>
+            </a>
+          <% }); %>
+        </div>
       </div>
     </section>
   <% } %>
