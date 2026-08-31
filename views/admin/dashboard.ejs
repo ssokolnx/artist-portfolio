@@ -78,6 +78,10 @@
           <input type="text" name="event" placeholder="например, «Весенний вернисаж 2021»" />
           <label>Описание (необязательно)</label>
           <textarea name="description" rows="3"></textarea>
+          <label class="checkbox-label">
+            <input type="checkbox" name="featured" />
+            Показывать в «Избранном» на главной странице
+          </label>
           <label>Фотография картины</label>
           <input type="file" name="image" accept="image/*" required />
           <button type="submit" class="button">Добавить в галерею</button>
@@ -87,7 +91,9 @@
         <p class="hint">
           Выберите до 20 фотографий сразу — каждая станет отдельной картиной
           в галерее с названием по имени файла. Год, конкурс и описание
-          можно будет дозаполнить у каждой картины через «Изменить».
+          можно будет дозаполнить у каждой картины через «Изменить». Пока не
+          отметите картины как избранные, на главной будут показываться
+          просто самые новые по году.
         </p>
         <form method="POST" action="/admin/gallery/bulk-add" enctype="multipart/form-data" class="card-form">
           <label>Фотографии картин</label>
@@ -105,6 +111,7 @@
               <% if (item.imageThumb) { %><img class="item-card__thumb" src="<%= rawUrl(item.imageThumb) %>" alt="" /><% } %>
               <div class="item-card__body">
                 <strong><%= item.title %></strong> <span class="muted"><%= item.year || '' %></span>
+                <% if (item.featured) { %><span class="featured-badge">★ избранное</span><% } %>
                 <% if (item.event) { %><div class="muted"><%= item.event %></div><% } %>
                 <details>
                   <summary>Изменить</summary>
@@ -117,6 +124,10 @@
                     <input type="text" name="event" value="<%= item.event || '' %>" />
                     <label>Описание</label>
                     <textarea name="description" rows="3"><%= item.description %></textarea>
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="featured" <% if (item.featured) { %>checked<% } %> />
+                      Показывать в «Избранном» на главной странице
+                    </label>
                     <label>Новая фотография (необязательно)</label>
                     <input type="file" name="image" accept="image/*" />
                     <button type="submit" class="button button--small">Сохранить изменения</button>
