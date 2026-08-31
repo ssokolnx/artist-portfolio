@@ -140,6 +140,9 @@
                 <div class="tile__panel">
                   <div class="tile__panel-card">
                     <button type="button" class="tile__panel-close" aria-label="Закрыть">✕</button>
+                    <% if (item.imageThumb) { %>
+                      <img class="tile__panel-thumb" src="<%= rawUrl(item.imageThumb) %>" alt="" />
+                    <% } %>
                     <form method="POST" action="/admin/gallery/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
                       <label>Название</label>
                       <input type="text" name="title" value="<%= item.title %>" required />
@@ -173,18 +176,20 @@
 
       <!-- ===== НАГРАДЫ ===== -->
       <section class="tab-panel tab-panel--awards">
-        <h2>Добавить награду</h2>
-        <form method="POST" action="/admin/awards/add" enctype="multipart/form-data" class="card-form">
-          <label>Название награды</label>
-          <input type="text" name="title" required />
-          <label>Год</label>
-          <input type="number" name="year" />
-          <label>Описание (необязательно)</label>
-          <textarea name="description" rows="3"></textarea>
-          <label>Фотография награды (необязательно)</label>
-          <input type="file" name="image" accept="image/*" />
-          <button type="submit" class="button">Добавить награду</button>
-        </form>
+        <details class="add-section">
+          <summary class="add-section__summary">＋ Добавить награду</summary>
+          <form method="POST" action="/admin/awards/add" enctype="multipart/form-data" class="card-form">
+            <label>Название награды</label>
+            <input type="text" name="title" required />
+            <label>Год</label>
+            <input type="number" name="year" />
+            <label>Описание (необязательно)</label>
+            <textarea name="description" rows="3"></textarea>
+            <label>Фотография награды (необязательно)</label>
+            <input type="file" name="image" accept="image/*" />
+            <button type="submit" class="button">Добавить награду</button>
+          </form>
+        </details>
 
         <h2 class="section-gap">Все награды</h2>
         <% if (awards.length === 0) { %>
@@ -224,18 +229,20 @@
 
       <!-- ===== ВЫСТАВКИ ===== -->
       <section class="tab-panel tab-panel--exhibitions">
-        <h2>Добавить выставку</h2>
-        <form method="POST" action="/admin/exhibitions/add" class="card-form">
-          <label>Название выставки</label>
-          <input type="text" name="title" required />
-          <label>Год</label>
-          <input type="number" name="year" />
-          <label>Место проведения</label>
-          <input type="text" name="place" />
-          <label>Описание (необязательно)</label>
-          <textarea name="description" rows="3"></textarea>
-          <button type="submit" class="button">Добавить выставку</button>
-        </form>
+        <details class="add-section">
+          <summary class="add-section__summary">＋ Добавить выставку</summary>
+          <form method="POST" action="/admin/exhibitions/add" class="card-form">
+            <label>Название выставки</label>
+            <input type="text" name="title" required />
+            <label>Год</label>
+            <input type="number" name="year" />
+            <label>Место проведения</label>
+            <input type="text" name="place" />
+            <label>Описание (необязательно)</label>
+            <textarea name="description" rows="3"></textarea>
+            <button type="submit" class="button">Добавить выставку</button>
+          </form>
+        </details>
 
         <h2 class="section-gap">Все выставки</h2>
         <% if (exhibitions.length === 0) { %>
@@ -328,6 +335,9 @@
                 <div class="tile__panel">
                   <div class="tile__panel-card">
                     <button type="button" class="tile__panel-close" aria-label="Закрыть">✕</button>
+                    <% if (item.imageThumb) { %>
+                      <img class="tile__panel-thumb" src="<%= rawUrl(item.imageThumb) %>" alt="" />
+                    <% } %>
                     <form method="POST" action="/admin/process/edit/<%= item.id %>" enctype="multipart/form-data" class="card-form">
                       <label>Подпись</label>
                       <input type="text" name="title" value="<%= item.title || '' %>" />
