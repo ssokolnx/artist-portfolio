@@ -47,9 +47,45 @@ app.use((req, res, next) => {
   res.locals.siteTitle = home.title || "Портфолио";
   res.locals.siteUrl = `${req.protocol}://${req.get("host")}`;
   res.locals.ogDescription = (home.about || home.greeting || "").slice(0, 200);
-  res.locals.ogImage = home.photo ? github.rawUrl(home.photo) : null;
+  res.locals.ogImage = home.photo ? `${res.locals.siteUrl}${github.rawUrl(home.photo)}` : null;
   res.locals.currentPath = req.path;
   next();
+});
+
+// ---------- Прокси для фотографий ----------
+//
+// Все картинки сайта показываются с адреса /img/... на НАШЕМ сервере,
+// а не напрямую с raw.githubusercontent.com — с мая 2026 года именно
+// этот адрес GitHub стал нестабильно открываться у части посетителей из
+// России, хотя сам api.github.com работает нормально. Наш сервер сам
+// сходит за байтами картинки на GitHub (через api.github.com) и отдаст
+// их браузеру посетителя под своим доменом — так посетителю вообще не
+// нужно напрямую обращаться к серверам GitHub.
+//
+// Простой кэш в памяти на 30 минут — чтобы не дёргать GitHub заново на
+// каждый показ одной и той же картинки каждому новому посетителю.
+const imageCache = new Map(); // repoPath -> { buffer, expires }
+const IMAGE_CACHE_MS = 30 * 60 * 1000;
+
+app.get("/img/*", async (req, res) => {
+  const repoPath = `data/images/${req.params[0]}`;
+  try {
+    const cached = imageCache.get(repoPath);
+    let buffer;
+    if (cached && cached.expires > Date.now()) {
+      buffer = cached.buffer;
+    } else {
+      buffer = await github.getBinaryFile(repoPath);
+      if (!buffer) return res.status(404).send("Not found");
+      imageCache.set(repoPath, { buffer, expires: Date.now() + IMAGE_CACHE_MS });
+    }
+    res.set("Content-Type", "image/jpeg");
+    res.set("Cache-Control", "public, max-age=86400");
+    res.send(buffer);
+  } catch (err) {
+    console.error(`Не удалось получить изображение ${repoPath}:`, err.message);
+    res.status(502).send("Image unavailable");
+  }
 });
 
 // ---------- Публичные страницы ----------
