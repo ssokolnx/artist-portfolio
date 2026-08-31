@@ -34,8 +34,10 @@
 
       <div class="carousel">
         <div class="carousel__track">
-          <% // Список удваиваем, чтобы прокрутка выглядела бесконечной и без рывка в конце %>
-          <% [...featured, ...featured].forEach(function(item, idx) { %>
+          <% // Список отрисован в три набора подряд. Лента стартует с середины —
+             // так остаётся запас, чтобы крутить и вперёд, и назад, и в обе
+             // стороны кажется, что она никогда не кончается. %>
+          <% [...featured, ...featured, ...featured].forEach(function(item, idx) { %>
             <a
               href="/gallery/<%= item.id %>"
               class="artwork carousel__item"
@@ -45,7 +47,7 @@
               data-year="<%= item.year || '' %>"
               data-event="<%= item.event || '' %>"
               data-description="<%= item.description || '' %>"
-              <% if (idx >= featured.length) { %>aria-hidden="true" tabindex="-1"<% } %>
+              <% if (idx < featured.length || idx >= featured.length * 2) { %>aria-hidden="true" tabindex="-1"<% } %>
             >
               <div class="artwork__frame">
                 <% if (item.imageThumb) { %>
