@@ -48,10 +48,17 @@ app.use((req, res, next) => {
   res.locals.siteUrl = `${req.protocol}://${req.get("host")}`;
   res.locals.ogDescription = (home.about || home.greeting || "").slice(0, 200);
   res.locals.ogImage = home.photo ? github.rawUrl(home.photo) : null;
+  res.locals.currentPath = req.path;
   next();
 });
 
 // ---------- Публичные страницы ----------
+
+// Лёгкий адрес для внешнего сервиса-«будильника» (см. README) — не трогает
+// GitHub и не тратит его лимиты, просто подтверждает, что сайт не спит.
+app.get("/healthz", (req, res) => {
+  res.status(200).send("ok");
+});
 
 app.get("/", (req, res) => {
   const gallery = content().gallery;
@@ -59,7 +66,7 @@ app.get("/", (req, res) => {
   const featured = (marked.length > 0 ? marked : gallery)
     .slice()
     .sort((a, b) => (b.year || 0) - (a.year || 0))
-    .slice(0, 3);
+    .slice(0, 8);
   res.render("index", { home: content().home, featured });
 });
 
@@ -255,6 +262,20 @@ app.post("/admin/gallery/bulk-add", requireAuth, uploadMany.array("images", 20),
     }
     if (files.length > 0) {
       await store.save(`Добавлено картин: ${files.length}`);
+    }
+    res.redirect("/admin?saved=gallery");
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/admin/gallery/toggle-featured/:id", requireAuth, async (req, res, next) => {
+  try {
+    const data = content();
+    const item = data.gallery.find((i) => i.id === Number(req.params.id));
+    if (item) {
+      item.featured = !item.featured;
+      await store.save(item.featured ? `Добавлено в избранное: ${item.title}` : `Убрано из избранного: ${item.title}`);
     }
     res.redirect("/admin?saved=gallery");
   } catch (err) {
