@@ -62,11 +62,14 @@ app.get("/healthz", (req, res) => {
 
 app.get("/", (req, res) => {
   const gallery = content().gallery;
-  const marked = gallery.filter((i) => i.featured);
-  const featured = (marked.length > 0 ? marked : gallery)
-    .slice()
-    .sort((a, b) => (b.year || 0) - (a.year || 0))
-    .slice(0, 8);
+  // В карусель идут все картины. Отмеченные звёздочкой как избранные
+  // показываются первыми, дальше — по убыванию года.
+  const featured = gallery.slice().sort((a, b) => {
+    const fa = a.featured ? 1 : 0;
+    const fb = b.featured ? 1 : 0;
+    if (fa !== fb) return fb - fa;
+    return (b.year || 0) - (a.year || 0);
+  });
   res.render("index", { home: content().home, featured });
 });
 
